@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth scroll-pt-[90px]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DELIN B ANISH® — Frontend UI Developer</title>
+    <meta name="description" content="Delin B Anish, Frontend UI Developer. Two years of building React applications that are fast, accessible, and a joy to use.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1' stroke='%230F7A6E' stroke-width='3' stroke-linecap='round'/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Instrument+Serif:ital@0;1&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        paper: '#F1ECDF',
+                        paper2: '#E8E1CE',
+                        ink: '#2B221D',
+                        dark: '#4A3B32',
+                        accent: '#0F7A6E',
+                        tape: '#E4B33F',
+                    },
+                    fontFamily: {
+                        bricolage: ['"Bricolage Grotesque"', 'sans-serif'],
+                        serif: ['"Instrument Serif"', 'serif'],
+                        mono: ['"Space Mono"', 'monospace'],
+                    },
+                    transitionTimingFunction: {
+                        custom: 'cubic-bezier(.22, .9, .3, 1)',
+                    },
+                    keyframes: {
+                        spin: { to: { transform: 'rotate(360deg)' } },
+                        boing: {
+                            '0%': { transform: 'scale(1, 1)' },
+                            '30%': { transform: 'scale(1.18, .78)' },
+                            '60%': { transform: 'scale(.92, 1.12)' },
+                            '100%': { transform: 'scale(1, 1)' }
+                        },
+                        dip: { '50%': { transform: 'translateY(5px)' } },
+                        marq: { to: { transform: 'translateX(-50%)' } },
+                    },
+                    animation: {
+                        spin: 'spin 3s linear infinite',
+                        spinSlow: 'spin 9s linear infinite',
+                        spinVerySlow: 'spin 16s linear infinite',
+                        boing: 'boing .5s cubic-bezier(.22,.9,.3,1)',
+                        dip: 'dip 1.6s ease-in-out infinite',
+                        marquee: 'marq 26s linear infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script>
+        document.documentElement.classList.add('js')
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js">
+    </script>
+
+    <style>
+        /* ============ MINIMAL CUSTOM CSS — only what Tailwind can't do ============ */
+        :root {
+            --paper: #F1ECDF;
+            --paper2: #E8E1CE;
+            --ink: #2B221D;
+            --dark: #4A3B32;
+            --accent: #0F7A6E;
+            --tape: #E4B33F;
+            --fd: 'Bricolage Grotesque', sans-serif;
+            --fs: 'Instrument Serif', serif;
+            --fm: 'Space Mono', monospace;
+            --ease: cubic-bezier(.22, .9, .3, 1);
+        }
+
+        /* Reveal animations */
+        .js .rv {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity .8s var(--ease), transform .8s var(--ease);
+            transition-delay: var(--d, 0s);
+        }
+        .js .rv.on {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Custom cursor */
+        #cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #fff;
+            mix-blend-mode: difference;
+            pointer-events: none;
+            z-index: 400;
+            opacity: 0;
+            transition: opacity .3s;
+            will-change: transform;
+        }
+        #cursor.vis {
+            opacity: 1;
+        }
+        @media (hover: none) {
+            #cursor {
+                display: none;
+            }
+        }
+
+        /* Grain texture */
+        .grain {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: .055;
+            pointer-events: none;
+            z-index: 120;
+            mix-blend-mode: multiply;
+        }
+        .frame {
+            position: fixed;
+            inset: 12px;
+            border: 2px solid var(--paper);
+            mix-blend-mode: difference;
+            pointer-events: none;
+            z-index: 115;
+        }
+        @media (max-width: 640px) {
+            .frame {
+                display: none;
+            }
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: var(--paper);
+            z-index: 300;
+            transition: transform .75s cubic-bezier(.76, 0, .24, 1);
+            cursor: pointer;
+        }
+        .js .loader {
+            display: block;
+        }
+        .loader.done {
+            transform: translateY(-101%);
+            pointer-events: none;
+        }
+        .loader.done .loader-inner {
+            opacity: 0;
+        }
+        .loader-bar i {
+            display: block;
+            height: 100%;
+            background: var(--accent);
+            transform: scaleX(0);
+            transform-origin: left;
+        }
+
+        /* Menu */
+        .menu {
+            position: fixed;
+            inset: 0;
+            background: var(--dark);
+            z-index: 95;
+            color: var(--paper);
+            clip-path: inset(0 0 100% 0);
+            transition: clip-path .6s cubic-bezier(.76, 0, .24, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 6vw;
+        }
+        body.menu-open .menu {
+            clip-path: inset(0 0 0% 0);
+        }
+
+        /* Hero letter splitting */
+        .h-ch {
+            display: inline-block;
+            will-change: transform;
+        }
+        .h-ch.boing {
+            animation: boing .5s var(--ease);
+            color: var(--accent);
+        }
+
+        /* Kerning ticks */
+        .kern-ticks {
+            position: absolute;
+            inset: auto 0 4px 0;
+            height: 8px;
+            background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 10%);
+        }
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 34px;
+            background: transparent;
+            cursor: ew-resize;
+            position: relative;
+            z-index: 2;
+            margin: 0;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            height: 2.5px;
+            background: var(--ink);
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 2.5px solid var(--ink);
+            box-shadow: 2.5px 2.5px 0 var(--ink);
+            margin-top: -10px;
+        }
+        input[type=range]::-moz-range-track {
+            height: 2.5px;
+            background: var(--ink);
+        }
+        input[type=range]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 2.5px solid var(--ink);
+            box-shadow: 2.5px 2.5px 0 var(--ink);
+        }
+
+        /* Receipt perforation */
+        .receipt::after {
+            content: "";
+            display: block;
+            height: 9px;
+            margin: 1rem -1.7rem -1.4rem;
+            background: conic-gradient(from -45deg at 50% 100%, var(--paper) 90deg, transparent 0) 0 0/16px 9px repeat-x;
+        }
+
+        /* Testimonial tape */
+        .clip::before {
+            content: "";
+            position: absolute;
+            top: -13px;
+            left: 50%;
+            width: 96px;
+            height: 26px;
+            transform: translateX(-50%) rotate(-3deg);
+            background: var(--tape);
+            opacity: .92;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, .14);
+        }
+
+        /* Work preview card */
+        #wpreview {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 90;
+            pointer-events: none;
+            will-change: transform;
+        }
+        .wpreview-card {
+            width: 340px;
+            aspect-ratio: 3/2;
+            border: 2px solid var(--ink);
+            background: var(--paper);
+            box-shadow: 10px 10px 0 rgba(74, 59, 50, .9);
+            overflow: hidden;
+            transform: translate(-50%, -118%) rotate(-4deg) scale(.75);
+            opacity: 0;
+            transition: opacity .25s, transform .3s var(--ease);
+        }
+        #wpreview.show .wpreview-card {
+            opacity: 1;
+            transform: translate(-50%, -118%) rotate(-4deg) scale(1);
+        }
+        @media (hover: none) {
+            #wpreview {
+                display: none;
+            }
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 180;
+            visibility: hidden;
+        }
+        .modal.open {
+            visibility: visible;
+        }
+        .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(74, 59, 50, .6);
+            opacity: 0;
+            transition: opacity .35s;
+        }
+        .modal.open .modal-backdrop {
+            opacity: 1;
+        }
+        .modal-panel {
+            position: absolute;
+            inset: 2.5vh 3vw;
+            background: var(--paper);
+            border: 2px solid var(--ink);
+            overflow-y: auto;
+            opacity: 0;
+            transform: translateY(34px);
+            transition: opacity .4s, transform .45s var(--ease);
+            box-shadow: 14px 14px 0 rgba(74, 59, 50, .3);
+        }
+        .modal.open .modal-panel {
+            opacity: 1;
+            transform: none;
+        }
+        .modal-close {
+            position: sticky;
+            top: 14px;
+            margin-left: auto;
+            margin-right: 14px;
+            z-index: 5;
+            display: block;
+            border: 2px solid var(--ink);
+            background: var(--paper);
+            padding: .6em 1.1em;
+            width: max-content;
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            left: 50%;
+            bottom: 30px;
+            z-index: 220;
+            transform: translate(-50%, 24px);
+            background: var(--dark);
+            color: var(--paper);
+            border-left: 5px solid var(--accent);
+            padding: 1em 1.5em;
+            opacity: 0;
+            pointer-events: none;
+            max-width: 88vw;
+            transition: opacity .3s, transform .4s var(--ease);
+        }
+        #toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        /* Comic Sans easter egg */
+        body.comicsans,
+        body.comicsans * {
+            font-family: 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', cursive !important;
+        }
+
+        /* Body lock */
+        body.lock,
+        body.menu-open {
+            overflow: hidden;
+        }
+
+        /* Barcode */
+        .barcode {
+            height: 44px;
+            margin-top: .9rem;
+            background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 5px, transparent 5px 9px, var(--ink) 9px 12px, transparent 12px 13px, var(--ink) 13px 14px, transparent 14px 18px);
+        }
+
+        /* Work thumbnails (mobile only) */
+        .w-thumb {
+            display: none;
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            margin-top: 1.2rem;
+            border: 1.5px solid currentColor;
+        }
+        @media (max-width: 860px) {
+            .w-thumb {
+                display: block;
+            }
+            #wpreview {
+                display: none;
+            }
+        }
+
+        /* Burger */
+        .burger {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            padding: 6px;
+            z-index: 110;
+        }
+        .burger span {
+            display: block;
+            width: 26px;
+            height: 2.5px;
+            background: var(--ink);
+            transition: transform .35s var(--ease), background .3s;
+        }
+        body.menu-open .burger span:first-child {
+            transform: translateY(4.25px) rotate(45deg);
+        }
+        body.menu-open .burger span:last-child {
+            transform: translateY(-4.25px) rotate(-45deg);
+        }
+        body.menu-open .burger span {
+            background: var(--paper);
+        }
+        @media (max-width: 860px) {
+            .burger {
+                display: flex;
+            }
+        }
+
+        /* Service accordion open state */
+        .svc.open .svc-body {
+            grid-template-rows: 1fr;
+        }
+        .svc.open .svc-plus {
+            transform: rotate(45deg);
+            color: var(--accent);
+        }
+
+        /* Nav scrolled state */
+        body.scrolled .nav {
+            background: var(--paper);
+            border-color: var(--ink);
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+        }
+
+        /* Fix menu open logo background */
+        body.menu-open .nav .logo {
+            color: var(--paper);
+        }
+        body.menu-open .nav .logo svg {
+            color: var(--accent);
+        }
+
+        /* Language switcher button */
+        .lang-switch {
+            font-family: var(--fm);
+            font-weight: bold;
+            font-size: 10px;
+            letter-spacing: .14em;
+            border: 2px solid var(--ink);
+            border-radius: 999px;
+            padding: .4em 1.1em;
+            background: var(--paper);
+            color: var(--ink);
+            cursor: pointer;
+            transition: background .2s, color .2s;
+            text-transform: uppercase;
+        }
+        .lang-switch:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--paper);
+        }
+
+        /* RTL adjustments */
+        html[dir="rtl"] body {
+            text-align: right;
+        }
+        html[dir="rtl"] .nav-links {
+            flex-direction: row-reverse;
+        }
+        html[dir="rtl"] .hero-meta,
+        html[dir="rtl"] .hero-foot {
+            justify-content: flex-end;
+        }
+        html[dir="rtl"] .work-row,
+        html[dir="rtl"] .tl-row,
+        html[dir="rtl"] .svc-head {
+            grid-template-columns: auto 1fr auto;
+        }
+        html[dir="rtl"] .w-arrow {
+            transform: scaleX(-1);
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
+            html {
+                scroll-behavior: auto;
+            }
+        }
+    </style>
+</head>
+<body class="bg-transparent text-ink font-bricolage font-normal text-base leading-relaxed overflow-x-clip antialiased">
+
+    <!-- Particle sphere canvas -->
+    <canvas id="sphereCanvas" aria-hidden="true" class="fixed top-0 left-0 w-screen h-screen -z-10 pointer-events-none"></canvas>
+
+    <!-- texture, frame, cursor -->
+    <svg class="grain" aria-hidden="true"><filter id="grainF"><feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#grainF)"/></svg>
+    <div class="frame" aria-hidden="true"></div>
+    <div id="cursor" aria-hidden="true"></div>
+
+    <!-- loader -->
+    <div class="loader" id="loader" aria-hidden="true">
+        <div class="loader-inner h-full flex flex-col justify-center items-center gap-5 transition-opacity duration-300">
+            <svg class="loader-star w-[38px] h-[38px] text-accent animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+            <div class="loader-line font-mono font-bold text-[11px] tracking-[.18em] uppercase min-h-[1.2em]" id="lLine" data-i18n="loader.line1">warming up the components</div>
+            <div class="loader-pct font-bricolage font-extrabold text-[clamp(4rem,14vw,10rem)] leading-none -tracking-[.04em] tabular-nums" id="lPct">0%</div>
+        </div>
+        <span class="loader-skip absolute bottom-[26px] right-[30px] font-mono font-bold text-[10px] tracking-[.16em] opacity-60" data-i18n="loader.skip">CLICK TO SKIP THE DRAMA</span>
+        <div class="loader-bar absolute bottom-0 left-0 w-full h-[6px]"><i id="lBar"></i></div>
+    </div>
+
+    <!-- nav -->
+    <nav class="nav fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-[4vw] py-[1.1rem] transition-all duration-300 border-b-[1.5px] border-transparent bg-transparent" id="mainNav">
+        <a class="logo flex items-center gap-[.4rem] font-bricolage font-extrabold text-xl -tracking-[.03em]" href="#top">AB<svg class="w-[15px] h-[15px] text-accent transition-transform duration-600 ease-custom hover:rotate-180" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></a>
+        <div class="nav-links hidden md:flex gap-7 items-center">
+            <a href="#work" class="font-mono font-bold text-[11px] tracking-[.14em] uppercase hover:line-through hover:decoration-accent hover:decoration-2" data-i18n="nav.work">Work</a>
+            <a href="#receipt" class="font-mono font-bold text-[11px] tracking-[.14em] uppercase hover:line-through hover:decoration-accent hover:decoration-2" data-i18n="nav.receipt">Receipt</a>
+            <a href="#timeline" class="font-mono font-bold text-[11px] tracking-[.14em] uppercase hover:line-through hover:decoration-accent hover:decoration-2" data-i18n="nav.timeline">Timeline</a>
+            <a href="#proof" class="font-mono font-bold text-[11px] tracking-[.14em] uppercase hover:line-through hover:decoration-accent hover:decoration-2" data-i18n="nav.proof">Proof</a>
+            <a href="#contact" class="font-mono font-bold text-[11px] tracking-[.14em] uppercase hover:line-through hover:decoration-accent hover:decoration-2" data-i18n="nav.contact">Contact</a>
+            <a class="hire font-mono font-bold text-[11px] tracking-[.12em] border-2 border-ink rounded-full px-[1.2em] py-[.6em] transition-colors duration-250 hover:bg-accent hover:border-accent hover:text-paper hover:no-underline" href="#contact" data-i18n="nav.hire">Hire me</a>
+            <button class="lang-switch" id="langSwitch" aria-label="Switch language">EN</button>
+        </div>
+        <button class="burger" id="burger" aria-label="Open menu"><span></span><span></span></button>
+    </nav>
+
+    <!-- mobile menu -->
+    <div class="menu" id="menu" aria-hidden="true">
+        <a class="menu-link flex items-baseline gap-4 py-[.6rem] border-b border-paper/20 font-bricolage font-extrabold text-[clamp(2.2rem,9vw,4.5rem)] leading-[1.05] uppercase -tracking-[.02em] transition-all duration-250 hover:text-accent hover:translate-x-2.5" href="#work"><span class="num font-mono font-bold text-sm text-accent">01</span><span data-i18n="nav.work">Work</span><em class="font-serif italic font-normal text-[.38em] uppercase-none tracking-normal opacity-75" data-i18n="menu.workTag">the projects</em></a>
+        <a class="menu-link flex items-baseline gap-4 py-[.6rem] border-b border-paper/20 font-bricolage font-extrabold text-[clamp(2.2rem,9vw,4.5rem)] leading-[1.05] uppercase -tracking-[.02em] transition-all duration-250 hover:text-accent hover:translate-x-2.5" href="#receipt"><span class="num font-mono font-bold text-sm text-accent">02</span><span data-i18n="nav.receipt">Receipt</span><em class="font-serif italic font-normal text-[.38em] tracking-normal opacity-75" data-i18n="menu.receiptTag">the damage report</em></a>
+        <a class="menu-link flex items-baseline gap-4 py-[.6rem] border-b border-paper/20 font-bricolage font-extrabold text-[clamp(2.2rem,9vw,4.5rem)] leading-[1.05] uppercase -tracking-[.02em] transition-all duration-250 hover:text-accent hover:translate-x-2.5" href="#timeline"><span class="num font-mono font-bold text-sm text-accent">03</span><span data-i18n="nav.timeline">Timeline</span><em class="font-serif italic font-normal text-[.38em] tracking-normal opacity-75" data-i18n="menu.timelineTag">career path</em></a>
+        <a class="menu-link flex items-baseline gap-4 py-[.6rem] border-b border-paper/20 font-bricolage font-extrabold text-[clamp(2.2rem,9vw,4.5rem)] leading-[1.05] uppercase -tracking-[.02em] transition-all duration-250 hover:text-accent hover:translate-x-2.5" href="#proof"><span class="num font-mono font-bold text-sm text-accent">04</span><span data-i18n="nav.proof">Proof</span><em class="font-serif italic font-normal text-[.38em] tracking-normal opacity-75" data-i18n="menu.proofTag">people talk</em></a>
+        <a class="menu-link flex items-baseline gap-4 py-[.6rem] border-b border-paper/20 font-bricolage font-extrabold text-[clamp(2.2rem,9vw,4.5rem)] leading-[1.05] uppercase -tracking-[.02em] transition-all duration-250 hover:text-accent hover:translate-x-2.5" href="#contact"><span class="num font-mono font-bold text-sm text-accent">05</span><span data-i18n="nav.contact">Contact</span><em class="font-serif italic font-normal text-[.38em] tracking-normal opacity-75" data-i18n="menu.contactTag">say hi</em></a>
+        <div class="menu-foot absolute bottom-[26px] left-[6vw] font-mono font-bold text-[10px] tracking-[.2em] opacity-60" data-i18n="menu.foot">EST. 2024 · STILL KERNING</div>
+    </div>
+
+    <main id="top">
+
+        <!-- ============ HERO ============ -->
+        <header class="hero min-h-screen flex flex-col justify-end px-[4vw] pt-[110px] pb-[2.2rem] relative bg-paper/30">
+            <div class="hero-meta flex flex-wrap gap-x-[2.4rem] gap-y-[.7rem] font-mono font-bold text-[10.5px] tracking-[.16em] uppercase" data-hero>
+                <span class="rv" data-hero data-i18n="hero.meta1">PORTFOLIO — FRONTEND UI DEVELOPER</span>
+                <span class="rv" data-hero style="--d:.06s" data-i18n="hero.meta2">EST. 2024</span>
+                <span class="rv" data-hero style="--d:.12s" id="localTime">LOCAL TIME: —</span>
+            </div>
+
+            <h1 class="hero-name mt-[1.6rem] mb-[1.2rem] font-bricolage font-extrabold uppercase">
+                <span class="h-line h-split block text-[clamp(3.9rem,15.5vw,14.5rem)] leading-[.84] -tracking-[.035em] rv" data-hero style="--d:.15s">DELIN B<svg class="h-star inline-block w-[.42em] h-[.42em] text-accent align-super ml-[.06em] animate-spinSlow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span>
+                <span class="h-line h-split block text-[clamp(3.9rem,15.5vw,14.5rem)] leading-[.84] -tracking-[.035em] rv" data-hero style="--d:.24s" id="nameLast">ANISH</span>
+            </h1>
+
+            <div class="hero-low grid grid-cols-1 lg:grid-cols-[1.15fr_.85fr] gap-12 lg:gap-12 items-end mb-[2.4rem]">
+                <div class="hero-intro">
+                    <p class="big font-bricolage font-medium text-[clamp(1.35rem,2.3vw,2rem)] leading-[1.35] max-w-[34ch] -tracking-[.01em] rv" data-hero style="--d:.33s" data-i18n="hero.intro1">Frontend <em class="font-serif italic font-normal text-[1.1em]">UI Developer</em> with 2 years of experience building React.js web applications. I specialize in core front-end technologies and modern React development.</p>
+                    <p class="note font-serif italic font-normal text-[1.05rem] leading-[1.5] opacity-80 mt-4 max-w-[44ch] rv" data-hero style="--d:.4s" data-i18n="hero.intro2">( Anish is my real name. So is the kerning obsession. Drag the slider — I insist. )</p>
+                </div>
+                <div class="kern max-w-[430px] justify-self-start lg:justify-self-end w-full rv" data-hero style="--d:.48s">
+                    <span class="kern-label block font-mono font-bold text-[10.5px] tracking-[.14em] mb-[.7rem] min-h-[1.2em]" id="kernLabel" data-i18n="hero.kernLabel">KERNING: <b class="text-accent">AS GOD INTENDED</b></span>
+                    <div class="kern-track relative h-[34px]">
+                        <div class="kern-ticks" aria-hidden="true"></div>
+                        <input type="range" id="kern" min="0" max="100" value="11" aria-label="Adjust the kerning of my last name. Go on.">
+                    </div>
+                    <div class="kern-ends flex justify-between font-mono font-bold text-[9px] tracking-[.14em] opacity-65 mt-[.4rem] uppercase"><span data-i18n="hero.kernEnd1">SQUISHED</span><span data-i18n="hero.kernEnd2">SOCIAL DISTANCING</span></div>
+                </div>
+            </div>
+
+            <div class="hero-foot flex flex-wrap justify-between gap-x-8 gap-y-3 border-t-[1.5px] border-ink pt-[1.2rem] font-mono font-bold text-[10.5px] tracking-[.16em] uppercase rv" data-hero style="--d:.56s">
+                <span data-i18n="hero.scroll">SCROLL — IT GETS BETTER <svg class="icon dip inline-block w-[1em] h-[1em] align-[-.12em] animate-dip" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span data-i18n="hero.stats">2 YRS · 3+ PROJECTS · 0 REGRETS* <span title="one">(*ZERO)</span></span>
+            </div>
+
+            <div class="badge absolute top-[19vh] right-[5vw] w-[158px] h-[158px] hidden md:block rv" data-hero style="--d:.6s" aria-hidden="true">
+                <svg class="ring w-full h-full animate-spinVerySlow" viewBox="0 0 200 200">
+                    <defs><path id="circ" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0"/></defs>
+                    <text class="font-mono font-bold text-[13.5px] tracking-[3.4px] fill-ink uppercase"><textPath href="#circ" data-i18n="hero.badge">OPEN TO FRONTEND ROLES · REACT SPECIALIST ·</textPath></text>
+                </svg>
+                <div class="core absolute inset-0 grid place-items-center"><svg class="w-[34px] h-[34px] text-accent" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></div>
+            </div>
+        </header>
+
+        <!-- ============ MARQUEE ============ -->
+        <div class="marquee-wrap overflow-hidden py-[2.6rem] relative" aria-hidden="true">
+            <div class="marquee w-[106vw] -ml-[3vw] -rotate-[1.4deg] bg-accent text-paper border-y-2 border-ink overflow-hidden">
+                <div class="marquee-track flex w-max animate-marquee" id="marqTrack">
+                    <div class="marquee-set flex items-center gap-[2.6rem] py-[.95rem] pr-[1.3rem] pl-[2.6rem]">
+                        <span class="font-bricolage font-extrabold text-[1.3rem] uppercase tracking-[.01em] whitespace-nowrap" data-i18n="marquee.exp">2 years experience</span><svg class="w-[17px] h-[17px] flex-none animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+                        <span class="font-bricolage font-extrabold text-[1.3rem] uppercase tracking-[.01em] whitespace-nowrap" data-i18n="marquee.react">React 19</span><svg class="w-[17px] h-[17px] flex-none animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+                        <span class="font-bricolage font-extrabold text-[1.3rem] uppercase tracking-[.01em] whitespace-nowrap" data-i18n="marquee.ts">TypeScript</span><svg class="w-[17px] h-[17px] flex-none animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+                        <span class="font-bricolage font-extrabold text-[1.3rem] uppercase tracking-[.01em] whitespace-nowrap" data-i18n="marquee.tailwind">Tailwind CSS</span><svg class="w-[17px] h-[17px] flex-none animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+                        <span class="font-bricolage font-extrabold text-[1.3rem] uppercase tracking-[.01em] whitespace-nowrap" data-i18n="marquee.redux">Redux Toolkit</span><svg class="w-[17px] h-[17px] flex-none animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+                        <span class="font-bricolage font-extrabold text-[1.3rem] uppercase tracking-[.01em] whitespace-nowrap" data-i18n="marquee.gsap">GSAP</span><svg class="w-[17px] h-[17px] flex-none animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+                        <span class="font-bricolage font-extrabold text-[1.3rem] uppercase tracking-[.01em] whitespace-nowrap" data-i18n="marquee.agile">Agile</span><svg class="w-[17px] h-[17px] flex-none animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+                        <span class="font-bricolage font-extrabold text-[1.3rem] uppercase tracking-[.01em] whitespace-nowrap" data-i18n="marquee.perf">Performance obsessed</span><svg class="w-[17px] h-[17px] flex-none animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ WORK ============ -->
+        <section id="work" class="py-[7.5rem] px-[4vw]">
+            <div class="shead mb-[3.5rem] max-w-[1100px]">
+                <span class="kicker inline-block font-mono font-bold text-[11px] leading-none tracking-[.16em] border-[1.5px] border-current rounded-full px-[1em] py-[.6em] mb-[1.7rem] uppercase rv" data-i18n="work.kicker">( 01 ) — SELECTED PROJECTS</span>
+                <h2 class="font-bricolage font-extrabold uppercase text-[clamp(2.7rem,7.5vw,7rem)] leading-[.95] -tracking-[.03em] rv" style="--d:.08s"><span data-i18n="work.title1">THE </span><em class="font-serif italic font-normal text-[.95em] normal-case tracking-normal text-accent" data-i18n="work.title2">projects</em></h2>
+                <p class="aside font-serif italic font-normal text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.45] opacity-85 max-w-[52ch] mt-[1.2rem] rv" style="--d:.16s" data-i18n="work.desc">Three projects that showcase my frontend engineering skills, from e-commerce platforms to admin dashboards and educational portals.</p>
+            </div>
+            <ol class="work-list border-b-2 border-ink">
+                <li class="work-row group border-t-2 border-ink cursor-pointer grid grid-cols-[2.2rem_1fr] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-start px-[.4rem] md:px-4 py-[1.8rem] md:py-[2.3rem] transition-colors duration-250 relative hover:bg-dark hover:text-paper focus-visible:bg-dark focus-visible:text-paper focus-visible:outline-none rv" tabindex="0" role="button" aria-haspopup="dialog" data-i="0">
+                    <span class="w-idx font-mono font-bold text-xs text-accent pt-[.5rem]">01</span>
+                    <div>
+                        <h3 class="w-title font-bricolage font-extrabold text-[clamp(1.7rem,4.6vw,4rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3.5" data-i18n="work.proj1.title">E-Commerce Platform</h3>
+                        <p class="w-tag font-serif italic font-normal text-[1.08rem] leading-[1.4] opacity-85 mt-[.55rem] max-w-[52ch]">Qatar Retail — React.js · Redux Toolkit · Tailwind CSS</p>
+                        <img class="w-thumb" src="https://picsum.photos/seed/ecommerce/900/560.jpg" alt="E-commerce platform for Qatar Retail" loading="lazy">
+                    </div>
+                    <div class="w-meta flex flex-col md:flex-row items-start md:items-end gap-2 md:gap-4 font-mono font-bold text-[10.5px] tracking-[.14em] uppercase text-right mt-4 md:mt-0 md:pt-[.5rem] md:text-right">
+                        <span data-i18n="work.proj1.meta">FRONTEND / E-COMMERCE</span><span>2025</span>
+                        <svg class="w-arrow hidden md:block w-[26px] h-[26px] opacity-0 -translate-x-2 translate-y-2 transition-all duration-300 ease-custom text-accent group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                </li>
+                <li class="work-row group border-t-2 border-ink cursor-pointer grid grid-cols-[2.2rem_1fr] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-start px-[.4rem] md:px-4 py-[1.8rem] md:py-[2.3rem] transition-colors duration-250 relative hover:bg-dark hover:text-paper focus-visible:bg-dark focus-visible:text-paper focus-visible:outline-none rv" tabindex="0" role="button" aria-haspopup="dialog" data-i="1" style="--d:.06s">
+                    <span class="w-idx font-mono font-bold text-xs text-accent pt-[.5rem]">02</span>
+                    <div>
+                        <h3 class="w-title font-bricolage font-extrabold text-[clamp(1.7rem,4.6vw,4rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3.5" data-i18n="work.proj2.title">Admin Panel & Dashboard</h3>
+                        <p class="w-tag font-serif italic font-normal text-[1.08rem] leading-[1.4] opacity-85 mt-[.55rem] max-w-[52ch]">React.js · TypeScript · RTK Query — modular, real-time inventory and analytics.</p>
+                        <img class="w-thumb" src="https://picsum.photos/seed/adminpanel/900/560.jpg" alt="E-commerce admin panel dashboard" loading="lazy">
+                    </div>
+                    <div class="w-meta flex flex-col md:flex-row items-start md:items-end gap-2 md:gap-4 font-mono font-bold text-[10.5px] tracking-[.14em] uppercase text-right mt-4 md:mt-0 md:pt-[.5rem] md:text-right">
+                        <span data-i18n="work.proj2.meta">DASHBOARD / UI</span><span>2024–2025</span>
+                        <svg class="w-arrow hidden md:block w-[26px] h-[26px] opacity-0 -translate-x-2 translate-y-2 transition-all duration-300 ease-custom text-accent group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                </li>
+                <li class="work-row group border-t-2 border-ink cursor-pointer grid grid-cols-[2.2rem_1fr] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-start px-[.4rem] md:px-4 py-[1.8rem] md:py-[2.3rem] transition-colors duration-250 relative hover:bg-dark hover:text-paper focus-visible:bg-dark focus-visible:text-paper focus-visible:outline-none rv" tabindex="0" role="button" aria-haspopup="dialog" data-i="2" style="--d:.12s">
+                    <span class="w-idx font-mono font-bold text-xs text-accent pt-[.5rem]">03</span>
+                    <div>
+                        <h3 class="w-title font-bricolage font-extrabold text-[clamp(1.7rem,4.6vw,4rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3.5" data-i18n="work.proj3.title">Educational Portal</h3>
+                        <p class="w-tag font-serif italic font-normal text-[1.08rem] leading-[1.4] opacity-85 mt-[.55rem] max-w-[52ch]">React.js · TypeScript · Tailwind CSS · REST APIs — search, filter, and subscription with Razorpay.</p>
+                        <img class="w-thumb" src="https://picsum.photos/seed/eduportal/900/560.jpg" alt="Educational portal with course browsing" loading="lazy">
+                    </div>
+                    <div class="w-meta flex flex-col md:flex-row items-start md:items-end gap-2 md:gap-4 font-mono font-bold text-[10.5px] tracking-[.14em] uppercase text-right mt-4 md:mt-0 md:pt-[.5rem] md:text-right">
+                        <span data-i18n="work.proj3.meta">PORTAL / PAYMENTS</span><span>2024</span>
+                        <svg class="w-arrow hidden md:block w-[26px] h-[26px] opacity-0 -translate-x-2 translate-y-2 transition-all duration-300 ease-custom text-accent group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                </li>
+            </ol>
+        </section>
+
+        <!-- floating work preview -->
+        <div id="wpreview" aria-hidden="true"><div class="wpreview-card"><img id="wpreviewImg" alt=""></div></div>
+
+        <!-- ============ RECEIPT ============ -->
+        <section id="receipt" class="receipt-sec py-[7.5rem] px-[4vw] bg-dark text-paper">
+            <div class="receipt-grid grid grid-cols-1 lg:grid-cols-[1fr_460px] gap-12 lg:gap-16 items-start">
+                <div>
+                    <div class="shead mb-0">
+                        <span class="kicker inline-block font-mono font-bold text-[11px] leading-none tracking-[.16em] border-[1.5px] border-current rounded-full px-[1em] py-[.6em] mb-[1.7rem] uppercase rv" data-i18n="receipt.kicker">( 02 ) — THE DAMAGE REPORT</span>
+                        <h2 class="font-bricolage font-extrabold uppercase text-[clamp(2.7rem,7.5vw,7rem)] leading-[.95] -tracking-[.03em] rv" style="--d:.08s"><span data-i18n="receipt.title1">TWO YEARS, </span><em class="font-serif italic font-normal text-[.95em] normal-case tracking-normal text-accent" data-i18n="receipt.title2">itemized.</em></h2>
+                        <p class="aside font-serif italic font-normal text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.45] opacity-85 max-w-[52ch] mt-[1.2rem] rv" style="--d:.16s" data-i18n="receipt.desc">Every pull request tells a story. Mine screams. All figures verified by my team lead, who laughed, then asked for more features.</p>
+                    </div>
+                    <p class="fine font-mono font-bold text-[10px] tracking-[.18em] mt-[2.4rem] opacity-55 uppercase rv" style="--d:.24s" data-i18n="receipt.fine">* NO REFUNDS · ALL SALES FINAL · COME AGAIN</p>
+                </div>
+                <div class="receipt bg-paper text-ink font-mono font-normal text-[12.5px] leading-[1.7] px-[1.7rem] pt-[2.2rem] pb-[1.4rem] rotate-[1.8deg] relative shadow-[12px_12px_0_var(--accent)] max-w-[460px] mx-auto w-full rv" style="--d:.2s" role="img" aria-label="A humorous receipt itemizing two years of frontend work">
+                    <div class="r-head text-center tracking-[.08em]"><strong class="block font-bricolage font-extrabold text-[1.35rem] tracking-[.02em]" data-i18n="receipt.head">CAREER RECEIPT</strong>Nº 001<br>DELIN B ANISH · FRONTEND UI DEVELOPER<br>ISSUED: 2024 — STILL PRINTING</div>
+                    <hr class="r-sep border-2 border-dashed border-ink my-[.9rem]">
+                    <div class="ritem flex items-baseline gap-[.5rem] uppercase"><span data-i18n="receipt.item1">Projects delivered</span><span class="dots flex-1 border-b-2 border-dotted border-ink -translate-y-1"></span><b class="font-bold whitespace-nowrap">3+</b></div>
+                    <div class="ritem flex items-baseline gap-[.5rem] uppercase"><span data-i18n="receipt.item2">React components built</span><span class="dots flex-1 border-b-2 border-dotted border-ink -translate-y-1"></span><b class="font-bold whitespace-nowrap" data-i18n="receipt.item2val">hundreds</b></div>
+                    <div class="ritem flex items-baseline gap-[.5rem] uppercase"><span data-i18n="receipt.item3">Bugs fixed</span><span class="dots flex-1 border-b-2 border-dotted border-ink -translate-y-1"></span><b class="font-bold whitespace-nowrap" data-i18n="receipt.item3val">many</b></div>
+                    <div class="ritem flex items-baseline gap-[.5rem] uppercase"><span data-i18n="receipt.item4">Console errors shipped</span><span class="dots flex-1 border-b-2 border-dotted border-ink -translate-y-1"></span><b class="font-bold whitespace-nowrap">0</b></div>
+                    <div class="ritem flex items-baseline gap-[.5rem] uppercase"><span data-i18n="receipt.item5">npm packages installed</span><span class="dots flex-1 border-b-2 border-dotted border-ink -translate-y-1"></span><b class="font-bold whitespace-nowrap" data-i18n="receipt.item5val">thousands</b></div>
+                    <div class="ritem flex items-baseline gap-[.5rem] uppercase"><span data-i18n="receipt.item6">Redux slices created</span><span class="dots flex-1 border-b-2 border-dotted border-ink -translate-y-1"></span><b class="font-bold whitespace-nowrap">12</b></div>
+                    <div class="ritem flex items-baseline gap-[.5rem] uppercase"><span data-i18n="receipt.item7">Coffee (litres)</span><span class="dots flex-1 border-b-2 border-dotted border-ink -translate-y-1"></span><b class="font-bold whitespace-nowrap">~500</b></div>
+                    <div class="ritem flex items-baseline gap-[.5rem] uppercase"><span data-i18n="receipt.item8">Meetings survived</span><span class="dots flex-1 border-b-2 border-dotted border-ink -translate-y-1"></span><b class="font-bold whitespace-nowrap" data-i18n="receipt.item8val">countless</b></div>
+                    <hr class="r-sep border-2 border-dashed border-ink my-[.9rem]">
+                    <div class="r-total font-bricolage font-extrabold text-[1rem] uppercase flex justify-between tracking-[.02em]"><span data-i18n="receipt.subtotal">SUBTOTAL</span><span data-i18n="receipt.subtotalVal">EXPERIENCE</span></div>
+                    <div class="r-total font-bricolage font-extrabold text-[1rem] uppercase flex justify-between tracking-[.02em]"><span data-i18n="receipt.vat">VAT (TRAUMA, IE11)</span><span data-i18n="receipt.vatVal">INCLUDED</span></div>
+                    <hr class="r-sep border-2 border-dashed border-ink my-[.9rem]">
+                    <div class="r-total font-bricolage font-extrabold text-[1rem] uppercase flex justify-between tracking-[.02em]"><span data-i18n="receipt.total">TOTAL</span><span class="text-accent" data-i18n="receipt.totalVal">2 YEARS</span></div>
+                    <div class="stamp absolute top-[46%] -right-[14px] -rotate-[13deg] border-[3.5px] border-accent text-accent font-bricolage font-extrabold text-[1.05rem] tracking-[.06em] uppercase px-[.7em] py-[.35em] opacity-92 bg-paper/60" data-i18n="receipt.stamp">2 yrs service</div>
+                    <div class="barcode" aria-hidden="true"></div>
+                    <div class="r-code text-center text-[10px] tracking-[.3em] mt-[.35rem]" data-i18n="receipt.code">ANISH-2024-∞ · VALID IN THIS DIMENSION</div>
+                    <div class="r-legal text-center text-[10px] tracking-[.12em] mt-[.7rem] uppercase opacity-75" data-i18n="receipt.legal">* NO REFUNDS · THANK YOU · COME AGAIN *</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ TIMELINE ============ -->
+        <section id="timeline" class="py-[7.5rem] px-[4vw]">
+            <div class="shead mb-[3.5rem] max-w-[1100px]">
+                <span class="kicker inline-block font-mono font-bold text-[11px] leading-none tracking-[.16em] border-[1.5px] border-current rounded-full px-[1em] py-[.6em] mb-[1.7rem] uppercase rv" data-i18n="timeline.kicker">( 03 ) — CAREER TIMELINE</span>
+                <h2 class="font-bricolage font-extrabold uppercase text-[clamp(2.7rem,7.5vw,7rem)] leading-[.95] -tracking-[.03em] rv" style="--d:.08s"><span data-i18n="timeline.title1">A BRIEF HISTORY OF </span><em class="font-serif italic font-normal text-[.95em] normal-case tracking-normal text-accent" data-i18n="timeline.title2">my growth</em></h2>
+                <p class="aside font-serif italic font-normal text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.45] opacity-85 max-w-[52ch] mt-[1.2rem] rv" style="--d:.16s" data-i18n="timeline.desc">Two years of frontend development, from internship to full-time engineer. The learning never stops.</p>
+            </div>
+            <ol class="tl border-b-[1.5px] border-ink">
+                <li class="tl-row grid grid-cols-1 md:grid-cols-[minmax(96px,150px)_1fr] gap-2 md:gap-8 border-t-[1.5px] border-ink px-[.6rem] py-[2rem] transition-transform duration-300 ease-custom hover:translate-x-2.5 rv"><span class="tl-year font-mono font-bold text-[1.05rem] text-accent">2024</span><div><h3 class="tl-title font-bricolage font-extrabold text-[1.4rem] uppercase -tracking-[.01em] flex items-center gap-[.8rem] flex-wrap" data-i18n="timeline.t1">Graduation & First Internship</h3><p class="tl-text max-w-[62ch] mt-[.45rem] text-[1.02rem] opacity-88" data-i18n="timeline.t1d">Completed B.E. in Electronics and Communication Engineering. Joined Spangles Infotech as a frontend apprentice, discovered my love for React.</p></div></li>
+                <li class="tl-row grid grid-cols-1 md:grid-cols-[minmax(96px,150px)_1fr] gap-2 md:gap-8 border-t-[1.5px] border-ink px-[.6rem] py-[2rem] transition-transform duration-300 ease-custom hover:translate-x-2.5 rv" style="--d:.05s"><span class="tl-year font-mono font-bold text-[1.05rem] text-accent">2024–2025</span><div><h3 class="tl-title font-bricolage font-extrabold text-[1.4rem] uppercase -tracking-[.01em] flex items-center gap-[.8rem] flex-wrap" data-i18n="timeline.t2">Frontend Developer (Apprenticeship)</h3><p class="tl-text max-w-[62ch] mt-[.45rem] text-[1.02rem] opacity-88" data-i18n="timeline.t2d">Built hospital admin panels, learned React performance optimization, and wrote my first test suites with Jest and React Testing Library.</p></div></li>
+                <li class="tl-row grid grid-cols-1 md:grid-cols-[minmax(96px,150px)_1fr] gap-2 md:gap-8 border-t-[1.5px] border-ink px-[.6rem] py-[2rem] transition-transform duration-300 ease-custom hover:translate-x-2.5 rv" style="--d:.05s"><span class="tl-year font-mono font-bold text-[1.05rem] text-accent">2025</span><div><h3 class="tl-title font-bricolage font-extrabold text-[1.4rem] uppercase -tracking-[.01em] flex items-center gap-[.8rem] flex-wrap" data-i18n="timeline.t3">Frontend Software Engineer</h3><p class="tl-text max-w-[62ch] mt-[.45rem] text-[1.02rem] opacity-88" data-i18n="timeline.t3d">Joined Tech Technologies Pvt Ltd. Improved checkout performance, integrated Razorpay, and worked with Redux Toolkit & RTK Query.</p></div></li>
+                <li class="tl-row grid grid-cols-1 md:grid-cols-[minmax(96px,150px)_1fr] gap-2 md:gap-8 border-t-[1.5px] border-ink px-[.6rem] py-[2rem] transition-transform duration-300 ease-custom hover:translate-x-2.5 rv" style="--d:.05s"><span class="tl-year font-mono font-bold text-[1.05rem] text-accent">2026</span><div><h3 class="tl-title font-bricolage font-extrabold text-[1.4rem] uppercase -tracking-[.01em] flex items-center gap-[.8rem] flex-wrap"><span data-i18n="timeline.t4">You Are Here</span> <span class="here-tag font-mono font-bold text-[9px] tracking-[.16em] border-[1.5px] border-accent text-accent rounded-full px-[.8em] py-[.35em]" data-i18n="timeline.current">CURRENT LOCATION</span></h3><p class="tl-text max-w-[62ch] mt-[.45rem] text-[1.02rem] opacity-88" data-i18n="timeline.t4d">Still building, still learning, still arguing about the best state management library. This website is proof of life.</p></div></li>
+            </ol>
+        </section>
+
+        <!-- ============ SERVICES / SKILLS ============ -->
+        <section id="services" class="py-[7.5rem] px-[4vw]">
+            <div class="shead mb-[3.5rem] max-w-[1100px]">
+                <span class="kicker inline-block font-mono font-bold text-[11px] leading-none tracking-[.16em] border-[1.5px] border-current rounded-full px-[1em] py-[.6em] mb-[1.7rem] uppercase rv" data-i18n="skills.kicker">( 04 ) — SKILLS</span>
+                <h2 class="font-bricolage font-extrabold uppercase text-[clamp(2.7rem,7.5vw,7rem)] leading-[.95] -tracking-[.03em] rv" style="--d:.08s"><span data-i18n="skills.title1">WHAT I DO </span><em class="font-serif italic font-normal text-[.95em] normal-case tracking-normal text-accent" data-i18n="skills.title2">(my toolkit)</em></h2>
+                <p class="aside font-serif italic font-normal text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.45] opacity-85 max-w-[52ch] mt-[1.2rem] rv" style="--d:.16s" data-i18n="skills.desc">Click around. Everything is expandable, including the skill set.</p>
+            </div>
+            <div class="svc group border-t-2 border-ink rv">
+                <button class="svc-head w-full grid grid-cols-[2.2rem_1fr_auto] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-center px-4 py-[1.7rem] text-left" aria-expanded="false"><span class="svc-idx font-mono font-bold text-xs text-accent">01</span><span class="svc-name font-bricolage font-extrabold text-[clamp(1.5rem,4vw,3.1rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3" data-i18n="skills.s1">React Development</span>
+                    <svg class="svc-plus w-[30px] h-[30px] transition-transform duration-400 ease-custom flex-none" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+                <div class="svc-body grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-custom"><div class="overflow-hidden"><div class="svc-inner px-4 md:px-[calc(3.6rem+1.6rem+1rem)] pb-[2rem] max-w-[70ch]">
+                            <p class="text-[1.05rem] opacity-90" data-i18n="skills.s1d">Building scalable, maintainable interfaces with React 19, Next.js, and modern patterns. Reusable components, hooks, and performance-conscious code.</p>
+                            <div class="inc flex flex-wrap gap-[.5rem] mt-4"><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">React 19</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Next.js</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Hooks</span></div>
+                        </div></div></div>
+            </div>
+            <div class="svc group border-t-2 border-ink rv" style="--d:.05s">
+                <button class="svc-head w-full grid grid-cols-[2.2rem_1fr_auto] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-center px-4 py-[1.7rem] text-left" aria-expanded="false"><span class="svc-idx font-mono font-bold text-xs text-accent">02</span><span class="svc-name font-bricolage font-extrabold text-[clamp(1.5rem,4vw,3.1rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3" data-i18n="skills.s2">UI Engineering & Accessibility</span>
+                    <svg class="svc-plus w-[30px] h-[30px] transition-transform duration-400 ease-custom flex-none" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+                <div class="svc-body grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-custom"><div class="overflow-hidden"><div class="svc-inner px-4 md:px-[calc(3.6rem+1.6rem+1rem)] pb-[2rem] max-w-[70ch]">
+                            <p class="text-[1.05rem] opacity-90" data-i18n="skills.s2d">Crafting responsive, WCAG-compliant interfaces with Tailwind CSS, Ant Design, and Material UI. Clean HTML5, modern CSS3, and ARIA best practices.</p>
+                            <div class="inc flex flex-wrap gap-[.5rem] mt-4"><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Tailwind</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Ant Design</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">WCAG</span></div>
+                        </div></div></div>
+            </div>
+            <div class="svc group border-t-2 border-ink rv" style="--d:.1s">
+                <button class="svc-head w-full grid grid-cols-[2.2rem_1fr_auto] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-center px-4 py-[1.7rem] text-left" aria-expanded="false"><span class="svc-idx font-mono font-bold text-xs text-accent">03</span><span class="svc-name font-bricolage font-extrabold text-[clamp(1.5rem,4vw,3.1rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3" data-i18n="skills.s3">State Management</span>
+                    <svg class="svc-plus w-[30px] h-[30px] transition-transform duration-400 ease-custom flex-none" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+                <div class="svc-body grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-custom"><div class="overflow-hidden"><div class="svc-inner px-4 md:px-[calc(3.6rem+1.6rem+1rem)] pb-[2rem] max-w-[70ch]">
+                            <p class="text-[1.05rem] opacity-90" data-i18n="skills.s3d">Managing complex state with Redux Toolkit, RTK Query, Zustand, and TanStack Query. Efficient data fetching, caching, and normalized stores.</p>
+                            <div class="inc flex flex-wrap gap-[.5rem] mt-4"><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Redux Toolkit</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">RTK Query</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Zustand</span></div>
+                        </div></div></div>
+            </div>
+            <div class="svc group border-t-2 border-ink rv" style="--d:.15s">
+                <button class="svc-head w-full grid grid-cols-[2.2rem_1fr_auto] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-center px-4 py-[1.7rem] text-left" aria-expanded="false"><span class="svc-idx font-mono font-bold text-xs text-accent">04</span><span class="svc-name font-bricolage font-extrabold text-[clamp(1.5rem,4vw,3.1rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3" data-i18n="skills.s4">Performance Optimization</span>
+                    <svg class="svc-plus w-[30px] h-[30px] transition-transform duration-400 ease-custom flex-none" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+                <div class="svc-body grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-custom"><div class="overflow-hidden"><div class="svc-inner px-4 md:px-[calc(3.6rem+1.6rem+1rem)] pb-[2rem] max-w-[70ch]">
+                            <p class="text-[1.05rem] opacity-90" data-i18n="skills.s4d">Improving load times and Core Web Vitals through code splitting, lazy loading, bundle analysis, and caching strategies. Performance is a feature.</p>
+                            <div class="inc flex flex-wrap gap-[.5rem] mt-4"><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">React.lazy</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Lighthouse</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Bundle analysis</span></div>
+                        </div></div></div>
+            </div>
+            <div class="svc group border-t-2 border-b-2 border-ink rv" style="--d:.2s">
+                <button class="svc-head w-full grid grid-cols-[2.2rem_1fr_auto] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-center px-4 py-[1.7rem] text-left" aria-expanded="false"><span class="svc-idx font-mono font-bold text-xs text-accent">05</span><span class="svc-name font-bricolage font-extrabold text-[clamp(1.5rem,4vw,3.1rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3" data-i18n="skills.s5">Testing & Quality</span>
+                    <svg class="svc-plus w-[30px] h-[30px] transition-transform duration-400 ease-custom flex-none" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+                <div class="svc-body grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-custom"><div class="overflow-hidden"><div class="svc-inner px-4 md:px-[calc(3.6rem+1.6rem+1rem)] pb-[2rem] max-w-[70ch]">
+                            <p class="text-[1.05rem] opacity-90" data-i18n="skills.s5d">Writing robust test suites with Jest, React Testing Library, and Vitest to catch bugs early and ensure UI stability.</p>
+                            <div class="inc flex flex-wrap gap-[.5rem] mt-4"><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Jest</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">RTL</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Vitest</span></div>
+                        </div></div></div>
+            </div>
+        </section>
+
+        <!-- ============ TESTIMONIALS ============ -->
+        <section id="proof" class="proof-sec py-[7.5rem] px-[4vw] bg-paper2">
+            <div class="shead mb-[3.5rem] max-w-[1100px]">
+                <span class="kicker inline-block font-mono font-bold text-[11px] leading-none tracking-[.16em] border-[1.5px] border-current rounded-full px-[1em] py-[.6em] mb-[1.7rem] uppercase rv" data-i18n="proof.kicker">( 05 ) — PROOF</span>
+                <h2 class="font-bricolage font-extrabold uppercase text-[clamp(2.7rem,7.5vw,7rem)] leading-[.95] -tracking-[.03em] rv" style="--d:.08s"><span data-i18n="proof.title1">PEOPLE </span><em class="font-serif italic font-normal text-[.95em] normal-case tracking-normal text-accent" data-i18n="proof.title2">talk.</em></h2>
+                <p class="aside font-serif italic font-normal text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.45] opacity-85 max-w-[52ch] mt-[1.2rem] rv" style="--d:.16s" data-i18n="proof.desc">Real quotes from real clients and colleagues. No further questions, your honour.</p>
+            </div>
+            <div class="clips columns-1 md:columns-2 lg:columns-3 gap-8">
+                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q1">Anish said 'it depends' for forty-five minutes. Then fixed it in five.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q1who">— A REAL CLIENT <b class="text-accent">*</b></figcaption></figure>
+                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv" style="--d:.06s"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q2">We asked for a dashboard. We received a dashboard, a lecture on performance, and our best quarter ever.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q2who">— HAPPY, SOMEWHAT</figcaption></figure>
+                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv" style="--d:.12s"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q3">He refused to use jQuery. He was right.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q3who">— STILL SCARRED</figcaption></figure>
+                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv" style="--d:.06s"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q4">Our app loads before we finish saying 'our app loads'.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q4who">— IMPATIENT INC.</figcaption></figure>
+                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv" style="--d:.12s"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q5">10/10. Would argue about CSS specificity again.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q5who">— GRAYSCALE LLC</figcaption></figure>
+                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv" style="--d:.18s"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q6">He optimized our bundle. Page speed is up 40%. Coincidence? Probably. We don't care.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q6who">— FONT ENTHUSIASTS MONTHLY</figcaption></figure>
+            </div>
+            <p class="clips-note font-mono font-bold text-[10px] tracking-[.16em] uppercase opacity-60 mt-4 rv" data-i18n="proof.note">* names withheld for legal reasons (mine)</p>
+        </section>
+
+        <!-- ============ CONTACT ============ -->
+        <section id="contact" class="contact-sec py-[7.5rem] px-[4vw] bg-accent text-paper">
+            <span class="kicker inline-block font-mono font-bold text-[11px] leading-none tracking-[.16em] border-[1.5px] border-current rounded-full px-[1em] py-[.6em] mb-[1.7rem] uppercase rv" data-i18n="contact.kicker">( 06 ) — CONTACT</span>
+            <h2 class="font-bricolage font-extrabold uppercase text-[clamp(4rem,14vw,13rem)] leading-[.95] -tracking-[.03em] rv" style="--d:.08s"><span data-i18n="contact.title1">SAY </span><em class="font-serif italic font-normal text-[.95em] normal-case tracking-normal text-paper" data-i18n="contact.title2">hi.</em></h2>
+            <p class="contact-sub font-bricolage font-medium text-[clamp(1.1rem,1.8vw,1.45rem)] leading-[1.5] max-w-[52ch] mt-[1.4rem] text-paper rv" style="--d:.16s" data-i18n="contact.desc">Good briefs welcome. Dancing babies are not. I reply faster than this website loads — which, admittedly, is a low bar while the kerning slider is involved.</p>
+            <button class="email-btn inline-flex items-center gap-[.7rem] mt-[2.6rem] font-mono font-bold text-[clamp(1.15rem,3vw,2.1rem)] -tracking-[.02em] border-b-[3px] border-paper pb-[.25em] text-paper transition-colors duration-250 hover:bg-paper hover:text-accent rv" id="emailBtn" style="--d:.24s">delinbanish@gmail.com
+                <svg class="w-[.85em] h-[.85em]" viewBox="0 0 24 24" fill="none"><rect x="8" y="8" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4H5.5A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8" stroke="currentColor" stroke-width="2"/></svg>
+            </button>
+            <div class="socials flex flex-wrap gap-6 mt-12 rv" style="--d:.3s">
+                <a href="https://linkedin.com/in/anish" target="_blank" rel="noopener" class="font-mono font-bold text-[11px] tracking-[.16em] inline-flex items-center gap-[.4rem] text-paper hover:line-through hover:decoration-paper hover:decoration-2">LINKEDIN <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                <a href="https://github.com" target="_blank" rel="noopener" class="font-mono font-bold text-[11px] tracking-[.16em] inline-flex items-center gap-[.4rem] text-paper hover:line-through hover:decoration-paper hover:decoration-2">GITHUB <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                <a href="https://twitter.com" target="_blank" rel="noopener" class="font-mono font-bold text-[11px] tracking-[.16em] inline-flex items-center gap-[.4rem] text-paper hover:line-through hover:decoration-paper hover:decoration-2">TWITTER <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                <a href="mailto:delinbanish@gmail.com" class="font-mono font-bold text-[11px] tracking-[.16em] inline-flex items-center gap-[.4rem] text-paper hover:line-through hover:decoration-paper hover:decoration-2">EMAIL <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            </div>
+            <p class="contact-note font-mono font-bold text-[10px] tracking-[.18em] uppercase mt-[3.2rem] opacity-85 text-paper rv" style="--d:.36s" data-i18n="contact.note">CURRENTLY OPEN TO: FRONTEND ROLES · CURRENTLY AVOIDING: "QUICK FIXES"</p>
+        </section>
+
+        <footer class="py-[2.2rem] px-[4vw] border-t-2 border-ink flex flex-wrap gap-y-5 gap-x-12 justify-center md:justify-between items-center font-mono font-bold text-[10px] tracking-[.14em] uppercase">
+            <span class="text-center" data-i18n="footer.copyright">© 2024–2026 DELIN B ANISH. ALL RIGHTS RESERVED, INCLUDING THE RIGHT TO REMAIN KERNING.</span>
+            <nav class="fnav flex gap-6 flex-wrap justify-center">
+                <a href="#work" class="hover:line-through hover:decoration-accent" data-i18n="nav.work">WORK</a><a href="#receipt" class="hover:line-through hover:decoration-accent" data-i18n="nav.receipt">RECEIPT</a><a href="#timeline" class="hover:line-through hover:decoration-accent" data-i18n="nav.timeline">TIMELINE</a><a href="#contact" class="hover:line-through hover:decoration-accent" data-i18n="nav.contact">CONTACT</a>
+            </nav>
+            <button id="dontPress" class="font-mono font-bold text-[10px] tracking-[.16em] text-accent border-2 border-accent px-[1.1em] py-[.6em] rounded-full transition-colors duration-250 hover:bg-accent hover:text-paper active:scale-95" data-i18n="footer.dontPress">DO NOT PRESS</button>
+        </footer>
+    </main>
+
+    <!-- ============ PROJECT MODAL ============ -->
+    <div class="modal" id="modal" aria-hidden="true">
+        <div class="modal-backdrop" data-close></div>
+        <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+            <button class="modal-close font-mono font-bold text-[11px] tracking-[.14em] hover:bg-dark hover:text-paper transition-colors duration-250" id="mClose" data-close data-i18n="modal.close">CLOSE — RUN AWAY</button>
+            <div class="modal-inner grid gap-10 lg:gap-[2.6rem] px-5 md:px-12 pb-8 md:pb-12 max-w-[1300px] mx-auto lg:grid-cols-[1.05fr_1fr] lg:items-start">
+                <div class="modal-media"><img id="mImg" class="w-full aspect-[4/3] object-cover border-2 border-ink" alt=""></div>
+                <div class="modal-body">
+                    <span class="m-meta font-mono font-bold text-[10.5px] tracking-[.16em] text-accent uppercase" id="mMeta"></span>
+                    <h3 class="font-bricolage font-extrabold text-[clamp(1.9rem,4vw,3.4rem)] leading-none uppercase -tracking-[.02em] mt-[.7rem] mb-[1.8rem]" id="mTitle"></h3>
+                    <div class="m-grid grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                        <div><h4 class="font-mono font-bold text-[10px] tracking-[.18em] text-accent uppercase mb-[.45rem]" data-i18n="modal.brief">THE BRIEF</h4><p class="text-[.98rem] leading-[1.55]" id="mBrief"></p></div>
+                        <div><h4 class="font-mono font-bold text-[10px] tracking-[.18em] text-accent uppercase mb-[.45rem]" data-i18n="modal.outcome">THE OUTCOME</h4><p class="text-[.98rem] leading-[1.55]" id="mOutcome"></p></div>
+                        <div><h4 class="font-mono font-bold text-[10px] tracking-[.18em] text-accent uppercase mb-[.45rem]" data-i18n="modal.quote">CLIENT QUOTE</h4><p class="quote font-serif italic font-normal text-[1.1rem]" id="mQuote"></p></div>
+                        <div><h4 class="font-mono font-bold text-[10px] tracking-[.18em] text-accent uppercase mb-[.45rem]" data-i18n="modal.lesson">LESSON LEARNED</h4><p class="text-[.98rem] leading-[1.55]" id="mLesson"></p></div>
+                    </div>
+                    <a id="mAsk" href="#" class="inline-flex items-center gap-[.5rem] mt-8 font-mono font-bold text-[12px] tracking-[.14em] border-2 border-ink px-[1.4em] py-[.9em] rounded-full transition-colors duration-250 hover:bg-accent hover:border-accent hover:text-paper" data-i18n="modal.ask">ASK ME ABOUT IT — SERIOUSLY <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" role="status" aria-live="polite" class="font-mono font-bold text-[11.5px] tracking-[.1em] uppercase"></div>
+
+    <script>
+        (function() {
+            'use strict';
+            const $ = s => document.querySelector(s),
+                $$ = s => [...document.querySelectorAll(s)];
+            const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const img = (seed, w, h) => 'https://picsum.photos/seed/' + seed + '/' + w + '/' + h + '.jpg';
+
+            /* ============ TRANSLATION SYSTEM ============ */
+            const translations = {
+                en: {
+                    // loader
+                    'loader.line1': 'warming up the components',
+                    'loader.skip': 'CLICK TO SKIP THE DRAMA',
+                    // nav
+                    'nav.work': 'Work',
+                    'nav.receipt': 'Receipt',
+                    'nav.timeline': 'Timeline',
+                    'nav.proof': 'Proof',
+                    'nav.contact': 'Contact',
+                    'nav.hire': 'Hire me',
+                    // menu tags
+                    'menu.workTag': 'the projects',
+                    'menu.receiptTag': 'the damage report',
+                    'menu.timelineTag': 'career path',
+                    'menu.proofTag': 'people talk',
+                    'menu.contactTag': 'say hi',
+                    'menu.foot': 'EST. 2024 · STILL KERNING',
+                    // hero
+                    'hero.meta1': 'PORTFOLIO — FRONTEND UI DEVELOPER',
+                    'hero.meta2': 'EST. 2024',
+                    'hero.intro1': 'Frontend <em class="font-serif italic font-normal text-[1.1em]">UI Developer</em> with 2 years of experience building React.js web applications. I specialize in core front-end technologies and modern React development.',
+                    'hero.intro2': '( Anish is my real name. So is the kerning obsession. Drag the slider — I insist. )',
+                    'hero.kernLabel': 'KERNING: <b class="text-accent">AS GOD INTENDED</b>',
+                    'hero.kernEnd1': 'SQUISHED',
+                    'hero.kernEnd2': 'SOCIAL DISTANCING',
+                    'hero.scroll': 'SCROLL — IT GETS BETTER',
+                    'hero.stats': '2 YRS · 3+ PROJECTS · 0 REGRETS* (*ZERO)',
+                    'hero.badge': 'OPEN TO FRONTEND ROLES · REACT SPECIALIST ·',
+                    // marquee
+                    'marquee.exp': '2 years experience',
+                    'marquee.react': 'React 19',
+                    'marquee.ts': 'TypeScript',
+                    'marquee.tailwind': 'Tailwind CSS',
+                    'marquee.redux': 'Redux Toolkit',
+                    'marquee.gsap': 'GSAP',
+                    'marquee.agile': 'Agile',
+                    'marquee.perf': 'Performance obsessed',
+                    // work
+                    'work.kicker': '( 01 ) — SELECTED PROJECTS',
+                    'work.title1': 'THE ',
+                    'work.title2': 'projects',
+                    'work.desc': 'Three projects that showcase my frontend engineering skills, from e-commerce platforms to admin dashboards and educational portals.',
+                    'work.proj1.title': 'E-Commerce Platform',
+                    'work.proj1.meta': 'FRONTEND / E-COMMERCE',
+                    'work.proj2.title': 'Admin Panel & Dashboard',
+                    'work.proj2.meta': 'DASHBOARD / UI',
+                    'work.proj3.title': 'Educational Portal',
+                    'work.proj3.meta': 'PORTAL / PAYMENTS',
+                    // receipt
+                    'receipt.kicker': '( 02 ) — THE DAMAGE REPORT',
+                    'receipt.title1': 'TWO YEARS, ',
+                    'receipt.title2': 'itemized.',
+                    'receipt.desc': 'Every pull request tells a story. Mine screams. All figures verified by my team lead, who laughed, then asked for more features.',
+                    'receipt.fine': '* NO REFUNDS · ALL SALES FINAL · COME AGAIN',
+                    'receipt.head': 'CAREER RECEIPT',
+                    'receipt.item1': 'Projects delivered',
+                    'receipt.item2': 'React components built',
+                    'receipt.item2val': 'hundreds',
+                    'receipt.item3': 'Bugs fixed',
+                    'receipt.item3val': 'many',
+                    'receipt.item4': 'Console errors shipped',
+                    'receipt.item5': 'npm packages installed',
+                    'receipt.item5val': 'thousands',
+                    'receipt.item6': 'Redux slices created',
+                    'receipt.item7': 'Coffee (litres)',
+                    'receipt.item8': 'Meetings survived',
+                    'receipt.item8val': 'countless',
+                    'receipt.subtotal': 'SUBTOTAL',
+                    'receipt.subtotalVal': 'EXPERIENCE',
+                    'receipt.vat': 'VAT (TRAUMA, IE11)',
+                    'receipt.vatVal': 'INCLUDED',
+                    'receipt.total': 'TOTAL',
+                    'receipt.totalVal': '2 YEARS',
+                    'receipt.stamp': '2 yrs service',
+                    'receipt.code': 'ANISH-2024-∞ · VALID IN THIS DIMENSION',
+                    'receipt.legal': '* NO REFUNDS · THANK YOU · COME AGAIN *',
+                    // timeline
+                    'timeline.kicker': '( 03 ) — CAREER TIMELINE',
+                    'timeline.title1': 'A BRIEF HISTORY OF ',
+                    'timeline.title2': 'my growth',
+                    'timeline.desc': 'Two years of frontend development, from internship to full-time engineer. The learning never stops.',
+                    'timeline.t1': 'Graduation & First Internship',
+                    'timeline.t1d': 'Completed B.E. in Electronics and Communication Engineering. Joined Spangles Infotech as a frontend apprentice, discovered my love for React.',
+                    'timeline.t2': 'Frontend Developer (Apprenticeship)',
+                    'timeline.t2d': 'Built hospital admin panels, learned React performance optimization, and wrote my first test suites with Jest and React Testing Library.',
+                    'timeline.t3': 'Frontend Software Engineer',
+                    'timeline.t3d': 'Joined Tech Technologies Pvt Ltd. Improved checkout performance, integrated Razorpay, and worked with Redux Toolkit & RTK Query.',
+                    'timeline.t4': 'You Are Here',
+                    'timeline.current': 'CURRENT LOCATION',
+                    'timeline.t4d': 'Still building, still learning, still arguing about the best state management library. This website is proof of life.',
+                    // skills
+                    'skills.kicker': '( 04 ) — SKILLS',
+                    'skills.title1': 'WHAT I DO ',
+                    'skills.title2': '(my toolkit)',
+                    'skills.desc': 'Click around. Everything is expandable, including the skill set.',
+                    'skills.s1': 'React Development',
+                    'skills.s1d': 'Building scalable, maintainable interfaces with React 19, Next.js, and modern patterns. Reusable components, hooks, and performance-conscious code.',
+                    'skills.s2': 'UI Engineering & Accessibility',
+                    'skills.s2d': 'Crafting responsive, WCAG-compliant interfaces with Tailwind CSS, Ant Design, and Material UI. Clean HTML5, modern CSS3, and ARIA best practices.',
+                    'skills.s3': 'State Management',
+                    'skills.s3d': 'Managing complex state with Redux Toolkit, RTK Query, Zustand, and TanStack Query. Efficient data fetching, caching, and normalized stores.',
+                    'skills.s4': 'Performance Optimization',
+                    'skills.s4d': 'Improving load times and Core Web Vitals through code splitting, lazy loading, bundle analysis, and caching strategies. Performance is a feature.',
+                    'skills.s5': 'Testing & Quality',
+                    'skills.s5d': 'Writing robust test suites with Jest, React Testing Library, and Vitest to catch bugs early and ensure UI stability.',
+                    // proof
+                    'proof.kicker': '( 05 ) — PROOF',
+                    'proof.title1': 'PEOPLE ',
+                    'proof.title2': 'talk.',
+                    'proof.desc': 'Real quotes from real clients and colleagues. No further questions, your honour.',
+                    'proof.q1': 'Anish said \'it depends\' for forty-five minutes. Then fixed it in five.',
+                    'proof.q1who': '— A REAL CLIENT *',
+                    'proof.q2': 'We asked for a dashboard. We received a dashboard, a lecture on performance, and our best quarter ever.',
+                    'proof.q2who': '— HAPPY, SOMEWHAT',
+                    'proof.q3': 'He refused to use jQuery. He was right.',
+                    'proof.q3who': '— STILL SCARRED',
+                    'proof.q4': 'Our app loads before we finish saying \'our app loads\'.',
+                    'proof.q4who': '— IMPATIENT INC.',
+                    'proof.q5': '10/10. Would argue about CSS specificity again.',
+                    'proof.q5who': '— GRAYSCALE LLC',
+                    'proof.q6': 'He optimized our bundle. Page speed is up 40%. Coincidence? Probably. We don\'t care.',
+                    'proof.q6who': '— FONT ENTHUSIASTS MONTHLY',
+                    'proof.note': '* names withheld for legal reasons (mine)',
+                    // contact
+                    'contact.kicker': '( 06 ) — CONTACT',
+                    'contact.title1': 'SAY ',
+                    'contact.title2': 'hi.',
+                    'contact.desc': 'Good briefs welcome. Dancing babies are not. I reply faster than this website loads — which, admittedly, is a low bar while the kerning slider is involved.',
+                    'contact.note': 'CURRENTLY OPEN TO: FRONTEND ROLES · CURRENTLY AVOIDING: "QUICK FIXES"',
+                    // footer
+                    'footer.copyright': '© 2024–2026 DELIN B ANISH. ALL RIGHTS RESERVED, INCLUDING THE RIGHT TO REMAIN KERNING.',
+                    'footer.dontPress': 'DO NOT PRESS',
+                    // modal
+                    'modal.close': 'CLOSE — RUN AWAY',
+                    'modal.brief': 'THE BRIEF',
+                    'modal.outcome': 'THE OUTCOME',
+                    'modal.quote': 'CLIENT QUOTE',
+                    'modal.lesson': 'LESSON LEARNED',
+                    'modal.ask': 'ASK ME ABOUT IT — SERIOUSLY',
+                },
+                ar: {
+                    // Arabic translations
+                    'loader.line1': 'تسخين المكونات',
+                    'loader.skip': 'انقر لتخطي الدراما',
+                    'nav.work': 'الأعمال',
+                    'nav.receipt': 'الإيصال',
+                    'nav.timeline': 'الجدول الزمني',
+                    'nav.proof': 'الإثبات',
+                    'nav.contact': 'اتصل',
+                    'nav.hire': 'وظّفني',
+                    'menu.workTag': 'المشاريع',
+                    'menu.receiptTag': 'تقرير الأضرار',
+                    'menu.timelineTag': 'المسار المهني',
+                    'menu.proofTag': 'قالوا عني',
+                    'menu.contactTag': 'قل مرحباً',
+                    'menu.foot': 'تأسس ٢٠٢٤ · ما زلت أضبط التباعد',
+                    'hero.meta1': 'معرض — مطور واجهات أمامية',
+                    'hero.meta2': 'تأسس ٢٠٢٤',
+                    'hero.intro1': 'مطور <em class="font-serif italic font-normal text-[1.1em]">واجهات أمامية</em> بخبرة سنتين في بناء تطبيقات React.js. أتخصص في تقنيات الواجهة الأمامية الأساسية وتطوير React الحديث.',
+                    'hero.intro2': '( أنيش هو اسمي الحقيقي. كذلك هوسي بضبط التباعد. اسحب الشريط — أنا أصرّ على ذلك. )',
+                    'hero.kernLabel': 'التباعد: <b class="text-accent">كما أراد الله</b>',
+                    'hero.kernEnd1': 'منضغط',
+                    'hero.kernEnd2': 'مسافة اجتماعية',
+                    'hero.scroll': 'مرر — يصبح أفضل',
+                    'hero.stats': 'سنتان · ٣+ مشاريع · ٠ ندم* (*صفر)',
+                    'hero.badge': 'مفتوح لأدوار الواجهة الأمامية · متخصص في React ·',
+                    'marquee.exp': 'سنتان خبرة',
+                    'marquee.react': 'React 19',
+                    'marquee.ts': 'TypeScript',
+                    'marquee.tailwind': 'Tailwind CSS',
+                    'marquee.redux': 'Redux Toolkit',
+                    'marquee.gsap': 'GSAP',
+                    'marquee.agile': 'Agile',
+                    'marquee.perf': 'مهووس بالأداء',
+                    'work.kicker': '( ٠١ ) — مشاريع مختارة',
+                    'work.title1': 'الـ ',
+                    'work.title2': 'مشاريع',
+                    'work.desc': 'ثلاثة مشاريع تعرض مهاراتي في هندسة الواجهات، من منصات التجارة الإلكترونية إلى لوحات الإدارة وبوابات التعليم.',
+                    'work.proj1.title': 'منصة تجارة إلكترونية',
+                    'work.proj1.meta': 'واجهة أمامية / تجارة إلكترونية',
+                    'work.proj2.title': 'لوحة الإدارة ولوحة التحكم',
+                    'work.proj2.meta': 'لوحة تحكم / واجهة',
+                    'work.proj3.title': 'بوابة تعليمية',
+                    'work.proj3.meta': 'بوابة / مدفوعات',
+                    'receipt.kicker': '( ٠٢ ) — تقرير الأضرار',
+                    'receipt.title1': 'سنتان، ',
+                    'receipt.title2': 'بالتفصيل.',
+                    'receipt.desc': 'كل طلب دمج يحكي قصة. قصتي تصرخ. جميع الأرقام تحقق منها قائد فريقي، الذي ضحك ثم طلب المزيد من الميزات.',
+                    'receipt.fine': '* لا استرداد · جميع المبيعات نهائية · عد مرة أخرى',
+                    'receipt.head': 'إيصال مهني',
+                    'receipt.item1': 'مشاريع سُلّمت',
+                    'receipt.item2': 'مكونات React بنيت',
+                    'receipt.item2val': 'مئات',
+                    'receipt.item3': 'أخطاء أُصلحت',
+                    'receipt.item3val': 'كثيرة',
+                    'receipt.item4': 'أخطاء كونسول صدرت',
+                    'receipt.item5': 'حزم npm مثبتة',
+                    'receipt.item5val': 'آلاف',
+                    'receipt.item6': 'شرائح Redux أنشئت',
+                    'receipt.item7': 'قهوة (لتر)',
+                    'receipt.item8': 'اجتماعات نجوت منها',
+                    'receipt.item8val': 'لا تُحصى',
+                    'receipt.subtotal': 'المجموع الفرعي',
+                    'receipt.subtotalVal': 'الخبرة',
+                    'receipt.vat': 'ضريبة القيمة المضافة (صدمة IE11)',
+                    'receipt.vatVal': 'مشمول',
+                    'receipt.total': 'الإجمالي',
+                    'receipt.totalVal': 'سنتان',
+                    'receipt.stamp': 'خدمة سنتين',
+                    'receipt.code': 'ANISH-2024-∞ · صالح في هذا البعد',
+                    'receipt.legal': '* لا استرداد · شكراً · عد مرة أخرى *',
+                    'timeline.kicker': '( ٠٣ ) — الجدول الزمني المهني',
+                    'timeline.title1': 'نبذة تاريخية عن ',
+                    'timeline.title2': 'نموّي',
+                    'timeline.desc': 'سنتان من تطوير الواجهة الأمامية، من التدريب إلى مهندس بدوام كامل. التعلم لا يتوقف.',
+                    'timeline.t1': 'التخرج والتدريب الأول',
+                    'timeline.t1d': 'أكملت بكالوريوس الهندسة في الإلكترونيات والاتصالات. انضممت إلى Spangles Infotech كمتدرب في الواجهة الأمامية واكتشفت حبي لـ React.',
+                    'timeline.t2': 'مطور واجهات أمامية (تدريب مهني)',
+                    'timeline.t2d': 'بنيت لوحات إدارة للمستشفيات، تعلمت تحسين أداء React، وكتبت أول مجموعات اختبار باستخدام Jest و React Testing Library.',
+                    'timeline.t3': 'مهندس برمجيات واجهات أمامية',
+                    'timeline.t3d': 'انضممت إلى Tech Technologies Pvt Ltd. حسّنت أداء الدفع، ودمجت Razorpay، وعملت مع Redux Toolkit و RTK Query.',
+                    'timeline.t4': 'أنت هنا',
+                    'timeline.current': 'الموقع الحالي',
+                    'timeline.t4d': 'ما زلت أبني، ما زلت أتعلم، ما زلت أجادل حول أفضل مكتبة لإدارة الحالة. هذا الموقع دليل على الحياة.',
+                    'skills.kicker': '( ٠٤ ) — المهارات',
+                    'skills.title1': 'ما أفعله ',
+                    'skills.title2': '(عدّتي)',
+                    'skills.desc': 'انقر حولك. كل شيء قابل للتوسيع، بما في ذلك مجموعة المهارات.',
+                    'skills.s1': 'تطوير React',
+                    'skills.s1d': 'بناء واجهات قابلة للتوسع والصيانة باستخدام React 19 و Next.js والأنماط الحديثة. مكونات قابلة لإعادة الاستخدام، وخطافات، ووعي بالأداء.',
+                    'skills.s2': 'هندسة الواجهة وإمكانية الوصول',
+                    'skills.s2d': 'صياغة واجهات متجاوبة ومتوافقة مع WCAG باستخدام Tailwind CSS و Ant Design و Material UI. HTML5 نظيف، CSS3 حديث، وأفضل ممارسات ARIA.',
+                    'skills.s3': 'إدارة الحالة',
+                    'skills.s3d': 'إدارة الحالة المعقدة مع Redux Toolkit و RTK Query و Zustand و TanStack Query. جلب بيانات فعال، وتخزين مؤقت، ومخازن طبيعية.',
+                    'skills.s4': 'تحسين الأداء',
+                    'skills.s4d': 'تحسين أوقات التحميل و Core Web Vitals عبر تقسيم الكود، والتحميل الكسول، وتحليل الحزم، واستراتيجيات التخزين المؤقت. الأداء ميزة.',
+                    'skills.s5': 'الاختبار والجودة',
+                    'skills.s5d': 'كتابة مجموعات اختبار قوية مع Jest و React Testing Library و Vitest لاكتشاف الأخطاء مبكراً وضمان استقرار الواجهة.',
+                    'proof.kicker': '( ٠٥ ) — الإثبات',
+                    'proof.title1': 'الناس ',
+                    'proof.title2': 'يتكلمون.',
+                    'proof.desc': 'اقتباسات حقيقية من عملاء وزملاء حقيقيين. لا مزيد من الأسئلة، حضرة القاضي.',
+                    'proof.q1': 'قال أنيش \'يعتمد\' لمدة خمس وأربعين دقيقة. ثم أصلحها في خمس.',
+                    'proof.q1who': '— عميل حقيقي *',
+                    'proof.q2': 'طلبنا لوحة تحكم. حصلنا على لوحة تحكم، ومحاضرة عن الأداء، وأفضل ربع لنا على الإطلاق.',
+                    'proof.q2who': '— سعيد، إلى حد ما',
+                    'proof.q3': 'رفض استخدام jQuery. كان محقاً.',
+                    'proof.q3who': '— ما زال يعاني',
+                    'proof.q4': 'تطبيقنا يُحمَّل قبل أن ننتهي من قول \'تطبيقنا يُحمَّل\'.',
+                    'proof.q4who': '— شركة نفاد الصبر',
+                    'proof.q5': '10/10. سأجادل حول خصوصية CSS مرة أخرى.',
+                    'proof.q5who': '— GRAYSCALE LLC',
+                    'proof.q6': 'قام بتحسين حزمة ملفاتنا. سرعة الصفحة ارتفعت 40٪. مصادفة؟ ربما. لا يهمنا.',
+                    'proof.q6who': '— مجلة عشاق الخطوط الشهرية',
+                    'proof.note': '* الأسماء محذوفة لأسباب قانونية (أسبابي)',
+                    'contact.kicker': '( ٠٦ ) — اتصال',
+                    'contact.title1': 'قل ',
+                    'contact.title2': 'مرحباً.',
+                    'contact.desc': 'الموجزات الجيدة مرحب بها. الأطفال الراقصون لا. أرد أسرع من تحميل هذا الموقع — وهو معترف به كمعيار منخفض عندما يكون شريط التباعد متورطاً.',
+                    'contact.note': 'مفتوح حالياً لـ: أدوار الواجهة الأمامية · يتجنب حالياً: "إصلاحات سريعة"',
+                    'footer.copyright': '© 2024–2026 DELIN B ANISH. جميع الحقوق محفوظة، بما في ذلك الحق في البقاء في حالة ضبط تباعد.',
+                    'footer.dontPress': 'لا تضغط',
+                    'modal.close': 'إغلاق — اهرب',
+                    'modal.brief': 'الموجز',
+                    'modal.outcome': 'النتيجة',
+                    'modal.quote': 'اقتباس العميل',
+                    'modal.lesson': 'الدرس المستفاد',
+                    'modal.ask': 'اسألني عنه — بجدية',
+                }
+            };
+
+            let currentLang = 'en';
+            const langSwitch = $('#langSwitch');
+            const html = document.documentElement;
+
+            function applyTranslations(lang) {
+                // Update dir attribute for RTL
+                if (lang === 'ar') {
+                    html.setAttribute('dir', 'rtl');
+                    html.setAttribute('lang', 'ar');
+                } else {
+                    html.setAttribute('dir', 'ltr');
+                    html.setAttribute('lang', lang);
+                }
+                // Replace text for all elements with data-i18n
+                $$('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (translations[lang][key] !== undefined) {
+                        // For elements that contain HTML (like hero.intro1), we set innerHTML
+                        // For others, we set textContent
+                        // We'll check if translation string contains '<' to decide innerHTML
+                        const trans = translations[lang][key];
+                        if (trans.includes('<')) {
+                            el.innerHTML = trans;
+                        } else {
+                            el.textContent = trans;
+                        }
+                    }
+                });
+                // Update language switch button text
+                langSwitch.textContent = lang.toUpperCase();
+                // Also update document title? optional
+            }
+
+            function cycleLanguage() {
+                const langs = ['en', 'ar', 'ta'];
+                const idx = langs.indexOf(currentLang);
+                currentLang = langs[(idx + 1) % langs.length];
+                applyTranslations(currentLang);
+            }
+
+            langSwitch.addEventListener('click', cycleLanguage);
+            // Initialize with English
+            applyTranslations('en');
+
+            /* ============ PARTICLE SPHERE ============ */
+            const canvas = $('#sphereCanvas');
+            const ctx = canvas.getContext('2d');
+            let W = 0,
+                H = 0,
+                DPR = Math.min(window.devicePixelRatio || 1, 2);
+            const glowCanvas = document.createElement('canvas');
+
+            function renderGlow() {
+                glowCanvas.width = Math.max(1, Math.round(W * DPR));
+                glowCanvas.height = Math.max(1, Math.round(H * DPR));
+                if (!W || !H) return;
+                const g = glowCanvas.getContext('2d');
+                g.setTransform(DPR, 0, 0, DPR, 0, 0);
+                const R = Math.min(W, H) * 0.335;
+                const cx = W / 2,
+                    cy = H / 2;
+                const layers = [
+                    [cx - R * 0.05, cy - R * 0.45, R * 0.85, 'rgba(255,210,150,0.30)'],
+                    [cx + R * 0.25, cy + R * 0.05, R * 0.95, 'rgba(255,130,95,0.20)'],
+                    [cx + R * 0.05, cy + R * 0.50, R * 0.75, 'rgba(210,75,125,0.16)']
+                ];
+                for (const [gx, gy, gr, col] of layers) {
+                    const grad = g.createRadialGradient(gx, gy, 0, gx, gy, gr);
+                    grad.addColorStop(0, col);
+                    grad.addColorStop(1, 'rgba(0,0,0,0)');
+                    g.fillStyle = grad;
+                    g.fillRect(0, 0, W, H);
+                }
+            }
+
+            function resize() {
+                DPR = Math.min(window.devicePixelRatio || 1, 2);
+                W = window.innerWidth;
+                H = window.innerHeight;
+                canvas.width = Math.max(1, Math.round(W * DPR));
+                canvas.height = Math.max(1, Math.round(H * DPR));
+                ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+                renderGlow();
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            const LAT_STEPS = 108,
+                LON_STEPS = 136;
+
+            function smoothstep(e0, e1, x) {
+                let t = (x - e0) / (e1 - e0);
+                t = Math.max(0, Math.min(1, t));
+                return t * t * (3 - 2 * t);
+            }
+
+            function bandValue(theta, phi, bandAngle, v0, width, uFreq, uPhase, lengthLo, lengthHi) {
+                const ca = Math.cos(bandAngle),
+                    sa = Math.sin(bandAngle);
+                const u = theta * ca + phi * sa;
+                const v = -theta * sa + phi * ca;
+                let closeness = Math.max(0, 1 - Math.abs(v - v0) / width);
+                closeness = Math.pow(closeness, 1.5);
+                const fold = Math.cos(u * uFreq + uPhase);
+                const corrug = fold * 0.5 + 0.5;
+                const lengthMask = smoothstep(lengthLo - 0.4, lengthLo, u) * (1 - smoothstep(lengthHi, lengthHi + 0.4, u));
+                return closeness * (0.55 + 0.55 * corrug) * lengthMask;
+            }
+
+            function ribbonField(theta, phi) {
+                const b1 = bandValue(theta, phi, 50 * Math.PI / 180, -0.05, 0.32, 3.6, 0.0, -1.6, 1.05);
+                const b2 = bandValue(theta, phi, 18 * Math.PI / 180, 0.55, 0.28, 4.5, 1.0, -0.6, 1.4);
+                return Math.max(b1, b2);
+            }
+
+            const particles = [];
+            for (let i = 0; i < LAT_STEPS; i++) {
+                const theta = -Math.PI / 2 + (i / (LAT_STEPS - 1)) * Math.PI;
+                const y0 = -Math.sin(theta);
+                const ring = Math.cos(theta);
+                for (let j = 0; j < LON_STEPS; j++) {
+                    const phi = (j / LON_STEPS) * Math.PI * 2 - Math.PI;
+                    const x0 = ring * Math.cos(phi);
+                    const z0 = ring * Math.sin(phi);
+                    const ribbon = ribbonField(theta, phi);
+                    particles.push({ x0, y0, z0, ribbon });
+                }
+            }
+
+            /* ============ VIRTUAL CORE ============ */
+            const coreRef = {
+                current: {
+                    position: { x: 0, y: 0, z: 0 },
+                    rotation: { x: 0, y: 0, z: 0 },
+                    scale: { x: 1, y: 1, z: 1 }
+                }
+            };
+            const scrollProgress = { current: 0 };
+
+            /* ============ SPHERE STATE ============ */
+            const IDLE_SPIN = reduced ? 0 : 0.0016;
+            const MAX_FLICK_SPIN = 0.05;
+            let rotX = -0.30,
+                rotY = 0.62,
+                velX = 0,
+                velY = IDLE_SPIN;
+            let dragging = false,
+                lastPX = 0,
+                lastPY = 0,
+                activePointer = null;
+            let paused = false,
+                rafId = 0;
+
+            function pointerDown(x, y) { dragging = true;
+                lastPX = x;
+                lastPY = y; }
+
+            function pointerMove(x, y) {
+                if (!dragging) return;
+                const dx = x - lastPX,
+                    dy = y - lastPY;
+                velY = Math.max(-MAX_FLICK_SPIN, Math.min(MAX_FLICK_SPIN, -dx * 0.0045));
+                velX = Math.max(-MAX_FLICK_SPIN, Math.min(MAX_FLICK_SPIN, -dy * 0.0045));
+                rotY += velY;
+                rotX += velX;
+                rotX = Math.max(-1.3, Math.min(1.3, rotX));
+                lastPX = x;
+                lastPY = y;
+            }
+
+            function pointerUp() { dragging = false; }
+
+            document.addEventListener('pointerdown', e => {
+                if (e.target.closest('a, button, input, .work-row, .clip, .svc-head, .menu, .modal')) return;
+                if (activePointer !== null) return;
+                activePointer = e.pointerId;
+                pointerDown(e.clientX, e.clientY);
+            });
+            document.addEventListener('pointermove', e => {
+                if (e.pointerId !== activePointer) return;
+                pointerMove(e.clientX, e.clientY);
+            });
+
+            function releasePointer(e) {
+                if (e.pointerId !== activePointer) return;
+                activePointer = null;
+                pointerUp();
+            }
+            document.addEventListener('pointerup', releasePointer);
+            document.addEventListener('pointercancel', releasePointer);
+
+            /* ============ SPHERE COLOR RAMPS ============ */
+            const CREAM = [255, 246, 220],
+                GOLD = [255, 206, 132],
+                ORANGE = [255, 140, 86],
+                MAGENTA = [200, 58, 132],
+                DEEPBLUE = [24, 9, 52];
+
+            function lerp(a, b, t) { return a + (b - a) * t; }
+
+            function mixC(c1, c2, t, out) {
+                out[0] = lerp(c1[0], c2[0], t);
+                out[1] = lerp(c1[1], c2[1], t);
+                out[2] = lerp(c1[2], c2[2], t);
+                return out;
+            }
+            const tmpA = [0, 0, 0],
+                tmpB = [0, 0, 0],
+                tmpC = [0, 0, 0],
+                tmpD = [0, 0, 0];
+
+            function baseColor(latT, out) {
+                if (latT < 0.28) return mixC(CREAM, GOLD, latT / 0.28, out);
+                else if (latT < 0.55) return mixC(GOLD, ORANGE, (latT - 0.28) / 0.27, out);
+                else if (latT < 0.80) return mixC(ORANGE, MAGENTA, (latT - 0.55) / 0.25, out);
+                else return mixC(MAGENTA, DEEPBLUE, (latT - 0.80) / 0.20, out);
+            }
+
+            const PERSPECTIVE = 3.4;
+            const drawPool = new Array(particles.length);
+            for (let i = 0; i < drawPool.length; i++) {
+                drawPool[i] = { px: 0, py: 0, z: 0, r: 0, g: 0, b: 0, a: 0, size: 0 };
+            }
+
+            function frame() {
+                rafId = 0;
+                if (paused) return;
+
+                if (!dragging) {
+                    velY += (IDLE_SPIN - velY) * 0.02;
+                    rotY += velY;
+                    velX *= 0.94;
+                    rotX += velX;
+                    rotX = Math.max(-1.3, Math.min(1.3, rotX));
+                }
+
+                const pos = coreRef.current.position;
+                const rot = coreRef.current.rotation;
+                const sca = coreRef.current.scale.x;
+                const finalRotX = rotX + rot.x;
+                const finalRotY = rotY + rot.y;
+                const finalScale = sca;
+                const R = Math.min(W, H) * 0.335 * finalScale;
+                const cosX = Math.cos(finalRotX),
+                    sinX = Math.sin(finalRotX);
+                const cosY = Math.cos(finalRotY),
+                    sinY = Math.sin(finalRotY);
+                const cx = W * 0.5 + pos.x;
+                const cy = H * 0.5 + pos.y;
+                const scale = W / 720;
+
+                ctx.clearRect(0, 0, W, H);
+                ctx.drawImage(glowCanvas, 0, 0, W, H);
+
+                let count = 0;
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    const bulge = 1 + Math.min(p.ribbon, 1.2) * 0.09;
+                    const xB = p.x0 * bulge,
+                        yB = p.y0 * bulge,
+                        zB = p.z0 * bulge;
+                    const x1 = xB * cosY - zB * sinY;
+                    const z1 = xB * sinY + zB * cosY;
+                    const y1 = yB * cosX - z1 * sinX;
+                    const z2 = yB * sinX + z1 * cosX;
+                    if (z2 < 0.02) continue;
+                    const factor = PERSPECTIVE / (PERSPECTIVE - z2);
+                    const px = cx + x1 * R * factor;
+                    const py = cy + y1 * R * factor;
+                    const latT = Math.max(0, Math.min(1, (1 + y1) / 2));
+                    const base = baseColor(latT, tmpA);
+                    const strength = Math.max(0, Math.min(1, p.ribbon));
+                    const s2 = strength * strength * (3 - 2 * strength);
+                    const dim = mixC(DEEPBLUE, base, 0.5, tmpB);
+                    const bright = mixC(base, CREAM, 0.55, tmpC);
+                    const col = mixC(dim, bright, s2, tmpD);
+                    const topBoost = Math.max(0, 0.32 - latT) * 0.5;
+                    const dimA = 0.34 + 0.20 * factor + topBoost;
+                    const brightA = Math.min(1, 0.34 + s2 * 0.85);
+                    const alpha = lerp(dimA, brightA, s2);
+                    const dimSize = 0.85 * factor;
+                    const brightSize = (0.9 + s2 * 1.5) * factor;
+                    const size = lerp(dimSize, brightSize, s2) * scale;
+                    const d = drawPool[count++];
+                    d.px = px;
+                    d.py = py;
+                    d.z = z2;
+                    d.r = col[0] | 0;
+                    d.g = col[1] | 0;
+                    d.b = col[2] | 0;
+                    d.a = alpha;
+                    d.size = size;
+                }
+
+                const visible = drawPool.slice(0, count);
+                visible.sort((a, b) => a.z - b.z);
+                for (let i = 0; i < visible.length; i++) {
+                    const d = visible[i];
+                    ctx.fillStyle = `rgba(${d.r},${d.g},${d.b},${d.a})`;
+                    ctx.fillRect(d.px - d.size, d.py - d.size, d.size * 2, d.size * 2);
+                }
+                rafId = requestAnimationFrame(frame);
+            }
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    paused = true;
+                    if (rafId) { cancelAnimationFrame(rafId);
+                        rafId = 0; }
+                } else {
+                    paused = false;
+                    if (!rafId) rafId = requestAnimationFrame(frame);
+                }
+            });
+            if (!rafId) rafId = requestAnimationFrame(frame);
+
+            /* ============ GSAP SCROLL TIMELINE ============ */
+            gsap.registerPlugin(ScrollTrigger);
+
+            function buildScrollTimeline() {
+                const tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: document.documentElement,
+                        start: 0,
+                        end: () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight),
+                        scrub: 1.2,
+                        invalidateOnRefresh: true,
+                        onUpdate: self => { scrollProgress.current = self.progress; }
+                    }
+                });
+
+                tl.to(coreRef.current.position, { x: 1.4 * 60, y: -0.2 * 40, z: 0.3, ease: "none", duration: 0.22 }, 0);
+                tl.to(coreRef.current.position, { x: -0.4 * 60, y: 0.1 * 40, z: 0.4, ease: "none", duration: 0.23 }, 0.22);
+                tl.to(coreRef.current.position, { x: 1.2 * 60, y: -0.1 * 40, z: 0.2, ease: "none", duration: 0.15 }, 0.45);
+                tl.to(coreRef.current.position, { x: -1.7 * 60, y: 0.05 * 40, z: 0.6, ease: "none", duration: 0.1 }, 0.6);
+                tl.to(coreRef.current.position, { x: 0, y: 0.2 * 40, z: -1.2, ease: "none", duration: 0.15 }, 0.85);
+
+                tl.to(coreRef.current.rotation, { y: Math.PI * 0.55, x: 0.3, ease: "none", duration: 0.22 }, 0);
+                tl.to(coreRef.current.rotation, { y: Math.PI * 1.05, x: 0.1, ease: "none", duration: 0.23 }, 0.22);
+                tl.to(coreRef.current.rotation, { y: Math.PI * 1.3, x: 0, ease: "none", duration: 0.15 }, 0.45);
+                tl.to(coreRef.current.rotation, { y: Math.PI * 1.6, x: 0.1, ease: "none", duration: 0.15 }, 0.85);
+
+                tl.to(coreRef.current.scale, { x: 0.92, y: 0.92, z: 0.92, ease: "none", duration: 0.22 }, 0);
+                tl.to(coreRef.current.scale, { x: 0.95, y: 0.95, z: 0.95, ease: "none", duration: 0.23 }, 0.22);
+                tl.to(coreRef.current.scale, { x: 1.05, y: 1.05, z: 1.05, ease: "none", duration: 0.15 }, 0.45);
+                tl.to(coreRef.current.scale, { x: 0.55, y: 0.55, z: 0.55, ease: "none", duration: 0.15 }, 0.85);
+
+                requestAnimationFrame(() => ScrollTrigger.refresh());
+                return tl;
+            }
+
+            /* ============ LOADER ============ */
+            const loader = $('#loader'),
+                lLine = $('#lLine'),
+                lPct = $('#lPct'),
+                lBar = $('#lBar');
+            const LINES = ['warming up the components', 'aligning things to nothing in particular', 'hiding the 2005 hit counter',
+                'negotiating with the grid', 'ok. it is just a website. go.'
+            ];
+            const TH = [0, 26, 54, 80, 97];
+            let prog = 0,
+                li = 0,
+                done = false;
+
+            function updLine() { while (li < TH.length - 1 && prog >= TH[li + 1]) li++;
+                lLine.textContent = LINES[li]; }
+
+            function heroIn() { $$('[data-hero]').forEach((el, i) => setTimeout(() => el.classList.add('on'), 380 + i * 95)); }
+
+            function finish() {
+                if (done) return;
+                done = true;
+                lPct.textContent = '100%';
+                lBar.style.transform = 'scaleX(1)';
+                lLine.textContent = LINES[LINES.length - 1];
+                setTimeout(() => { loader.classList.add('done');
+                    heroIn();
+                    buildScrollTimeline(); }, 300);
+            }
+            if (reduced) {
+                loader.classList.add('done');
+                $$('[data-hero]').forEach(el => el.classList.add('on'));
+                buildScrollTimeline();
+            } else {
+                updLine();
+                const iv = setInterval(() => {
+                    prog = Math.min(100, prog + Math.random() * 7 + 2.5);
+                    lPct.textContent = Math.floor(prog) + '%';
+                    lBar.style.transform = 'scaleX(' + (prog / 100) + ')';
+                    updLine();
+                    if (prog >= 100) { clearInterval(iv);
+                        setTimeout(finish, 320); }
+                }, 70);
+                loader.addEventListener('click', () => { clearInterval(iv);
+                    finish(); });
+            }
+
+            /* ============ SCROLL REVEALS ============ */
+            if ('IntersectionObserver' in window) {
+                const io = new IntersectionObserver(es => {
+                    es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on');
+                            io.unobserve(e.target); } });
+                }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
+                $$('.rv:not([data-hero])').forEach(el => io.observe(el));
+            } else { $$('.rv:not([data-hero])').forEach(el => el.classList.add('on')); }
+
+            /* ============ SPLIT HERO LETTERS + BOING ============ */
+            $$('.h-split').forEach(el => {
+                [...el.childNodes].forEach(n => {
+                    if (n.nodeType !== 3) return;
+                    const frag = document.createDocumentFragment();
+                    [...n.textContent].forEach(ch => {
+                        if (ch.trim() === '') { frag.appendChild(document.createTextNode(' ')); return; }
+                        const s = document.createElement('span');
+                        s.className = 'h-ch';
+                        s.textContent = ch;
+                        frag.appendChild(s);
+                    });
+                    el.replaceChild(frag, n);
+                });
+            });
+            $$('.h-ch').forEach(s => {
+                s.addEventListener('mouseenter', () => { s.classList.remove('boing');
+                    void s.offsetWidth;
+                    s.classList.add('boing'); });
+            });
+
+            /* ============ KERNING SLIDER ============ */
+            const ks = $('#kern'),
+                nameLast = $('#nameLast'),
+                kl = $('#kernLabel');
+
+            function kern() {
+                const v = +ks.value;
+                const k = (-0.06 + (v / 100) * 0.42);
+                nameLast.style.letterSpacing = k + 'em';
+                nameLast.classList.toggle('wild', v >= 92 || v <= 2);
+                const label = v < 4 ? 'VISUAL CRIME' : v < 9 ? 'TIGHT BUT LEGAL' : v < 15 ? 'AS GOD INTENDED' : v < 40 ?
+                    'BREATHING ROOM' : v < 68 ? 'AIRY. FRENCH, EVEN.' : v < 88 ? 'BOLD CHOICE' :
+                    "CONGRATS, IT'S A SENTENCE AGAIN";
+                kl.innerHTML = 'KERNING: <b>' + label + '</b>';
+            }
+            ks.addEventListener('input', kern);
+            kern();
+
+            /* ============ LOCAL TIME ============ */
+            function tick() {
+                const d = new Date(),
+                    h = String(d.getHours()).padStart(2, '0'),
+                    m = String(d.getMinutes()).padStart(2, '0');
+                $('#localTime').textContent = 'LOCAL TIME: ' + h + ':' + m + ' — COFFEE Nº' + ((d.getHours() % 5) + 1);
+            }
+            tick();
+            setInterval(tick, 30000);
+
+            /* ============ MARQUEE ============ */
+            const track = $('#marqTrack');
+            track.appendChild(track.firstElementChild.cloneNode(true));
+
+            /* ============ CURSOR + PREVIEW ============ */
+            let mx = innerWidth / 2,
+                my = innerHeight / 2,
+                vis = false;
+            addEventListener('mousemove', e => { mx = e.clientX;
+                my = e.clientY;
+                vis = true; });
+            document.addEventListener('mouseleave', () => { vis = false; });
+            const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+            const cur = $('#cursor'),
+                prev = $('#wpreview'),
+                prevImg = $('#wpreviewImg');
+            let cx = mx,
+                cy = my,
+                cs = 1,
+                cts = 1,
+                px = mx,
+                py = my;
+            if (fine) {
+                document.addEventListener('mouseover', e => { cts = e.target.closest('a,button,input,.work-row,.clip,.svc-head') ? 2.3 : 1; });
+            } else { cur.style.display = 'none'; }
+            (function loop() {
+                if (fine) {
+                    cx += (mx - cx) * .16;
+                    cy += (my - cy) * .16;
+                    cs += (cts - cs) * .15;
+                    cur.style.transform = 'translate(' + cx + 'px,' + cy + 'px) translate(-50%,-50%) scale(' + cs + ')';
+                    cur.classList.toggle('vis', vis);
+                    px += (mx - px) * .11;
+                    py += (my - py) * .11;
+                    const rot = Math.max(-7, Math.min(7, (mx - px) * .045));
+                    prev.style.transform = 'translate(' + px + 'px,' + py + 'px) rotate(' + rot + 'deg)';
+                }
+                requestAnimationFrame(loop);
+            })();
+
+            /* ============ WORK ROWS ============ */
+            const PROJECTS = [
+                { seed: 'ecommerce', title: 'E-COMMERCE PLATFORM', meta: 'FRONTEND / E-COMMERCE — 2025',
+                    brief: 'Update a legacy e-commerce platform to improve UI scalability and component reuse across catalog, checkout, and order workflows.',
+                    outcome: 'Built responsive catalog and product pages with Tailwind CSS. Moved state management to RTK Query for caching and normalized state, improving performance.',
+                    quote: '"It looks modern and loads fast." — the client, immediately asking for more features',
+                    lesson: 'Component reuse is not just about code; it\'s about not repeating yourself when the client changes their mind.' },
+                { seed: 'adminpanel', title: 'ADMIN PANEL & DASHBOARD', meta: 'DASHBOARD / UI — 2024–2025',
+                    brief: 'Build a modular React.js interface for an e-commerce admin dashboard to track orders and visualize analytics.',
+                    outcome: 'Created UI components for inventory, forms, and tables. Set up RTK Query with cache tags for automatic data refresh.',
+                    quote: '"He made the dashboard actually usable." — the product manager',
+                    lesson: 'Forms and tables may not be glamorous, but they are where the business lives.' },
+                { seed: 'eduportal', title: 'EDUCATIONAL PORTAL', meta: 'PORTAL / PAYMENTS — 2024',
+                    brief: 'Create a responsive educational portal for searching colleges and courses, with a subscription model and Razorpay integration.',
+                    outcome: 'Implemented JWT authentication and protected routes. Optimized large lists with lazy loading and pagination.',
+                    quote: '"Students actually found the colleges they wanted." — the client',
+                    lesson: 'Performance matters: nobody waits for a slow search, especially a student.' }
+            ];
+            const modal = $('#modal');
+            let lastFocus = null;
+            const rows = $$('.work-row');
+            rows.forEach(row => {
+                const p = PROJECTS[+row.dataset.i];
+                row.addEventListener('mouseenter', () => {
+                    if (!fine) return;
+                    prevImg.src = img(p.seed, 680, 460);
+                    prevImg.alt = p.title + ' preview';
+                    prev.classList.add('show');
+                });
+                row.addEventListener('mouseleave', () => prev.classList.remove('show'));
+                const open = () => openModal(+row.dataset.i);
+                row.addEventListener('click', open);
+                row.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault();
+                        open(); } });
+            });
+
+            function openModal(i) {
+                const p = PROJECTS[i];
+                $('#mImg').src = img(p.seed, 1400, 1000);
+                $('#mImg').alt = p.title + ' — project visual';
+                $('#mMeta').textContent = p.meta;
+                $('#mTitle').textContent = p.title;
+                $('#mBrief').textContent = p.brief;
+                $('#mOutcome').textContent = p.outcome;
+                $('#mQuote').textContent = p.quote;
+                $('#mLesson').textContent = p.lesson;
+                $('#mAsk').href = 'mailto:delinbanish@gmail.com?subject=' + encodeURIComponent('Tell me about ' + p.title);
+                lastFocus = document.activeElement;
+                modal.classList.add('open');
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('lock');
+                prev.classList.remove('show');
+                $('#mClose').focus();
+            }
+
+            function closeModal() {
+                modal.classList.remove('open');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('lock');
+                if (lastFocus) lastFocus.focus();
+            }
+            $$('[data-close]').forEach(el => el.addEventListener('click', closeModal));
+            document.addEventListener('keydown', e => {
+                if (e.key !== 'Escape') return;
+                if (modal.classList.contains('open')) closeModal();
+                if (document.body.classList.contains('menu-open')) {
+                    document.body.classList.remove('menu-open');
+                    $('#menu').setAttribute('aria-hidden', 'true');
+                }
+            });
+
+            // Focus trap for modal
+            document.addEventListener('keydown', function(e) {
+                if (modal.classList.contains('open') && e.key === 'Tab') {
+                    const focusable = modal.querySelectorAll('button, a, input, [tabindex]:not([tabindex="-1"])');
+                    if (!focusable.length) return;
+                    const first = focusable[0];
+                    const last = focusable[focusable.length - 1];
+                    if (e.shiftKey && document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    } else if (!e.shiftKey && document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    }
+                }
+            });
+
+            /* ============ SERVICES ACCORDION ============ */
+            $$('.svc').forEach(s => {
+                const b = s.querySelector('.svc-head');
+                b.addEventListener('click', () => {
+                    const wasOpen = s.classList.contains('open');
+                    $$('.svc.open').forEach(o => { o.classList.remove('open');
+                        o.querySelector('.svc-head').setAttribute('aria-expanded', 'false'); });
+                    if (!wasOpen) { s.classList.add('open');
+                        b.setAttribute('aria-expanded', 'true'); }
+                });
+            });
+
+            /* ============ NAV + BURGER ============ */
+            addEventListener('scroll', () => { document.body.classList.toggle('scrolled', scrollY > 40); }, { passive: true });
+            $('#burger').addEventListener('click', () => {
+                const open = document.body.classList.toggle('menu-open');
+                $('#menu').setAttribute('aria-hidden', String(!open));
+            });
+            $$('#menu a').forEach(a => a.addEventListener('click', () => {
+                document.body.classList.remove('menu-open');
+                $('#menu').setAttribute('aria-hidden', 'true');
+            }));
+
+            /* ============ COPY EMAIL ============ */
+            let copies = 0;
+            $('#emailBtn').addEventListener('click', async () => {
+                const em = 'delinbanish@gmail.com';
+                try { await navigator.clipboard.writeText(em); } catch (e) {
+                    const ta = document.createElement('textarea');
+                    ta.value = em;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    ta.remove();
+                }
+                copies++;
+                toast(['COPIED. I REPLY FASTER THAN THIS SITE LOADS.', 'STILL ON YOUR CLIPBOARD. NO PRESSURE.',
+                    'THREE TIMES? FLATTERED. NOW ACTUALLY EMAIL ME.'
+                ][Math.min(copies - 1, 2)]);
+            });
+
+            /* ============ TOAST ============ */
+            let toastT;
+            const toastEl = $('#toast');
+
+            function toast(msg) {
+                toastEl.textContent = msg;
+                toastEl.classList.add('show');
+                clearTimeout(toastT);
+                toastT = setTimeout(() => toastEl.classList.remove('show'), 2600);
+            }
+
+            /* ============ EASTER EGGS ============ */
+            $('#dontPress').addEventListener('click', () => {
+                const on = document.body.classList.toggle('comicsans');
+                toast(on ? '…you actually pressed it. this is on you now.' : 'balance restored. we never speak of this again.');
+            });
+            const baseTitle = document.title;
+            document.addEventListener('visibilitychange', () => {
+                document.title = document.hidden ? 'WAIT — COME BACK, I HAVE JOKES' : baseTitle;
+            });
+
+            /* ============ PRELOAD ============ */
+            addEventListener('load', () => PROJECTS.forEach(p => { const i = new Image();
+                i.src = img(p.seed, 680, 460); }));
+
+        })();
+    </script>
+</body>
+</html>

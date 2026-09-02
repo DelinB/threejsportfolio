@@ -1,0 +1,1776 @@
+     1→<!DOCTYPE html>
+     2→<html lang="en" class="scroll-smooth scroll-pt-[90px]">
+     3→<head>
+     4→    <meta charset="UTF-8">
+     5→    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     6→    <title>DELIN B ANISH® — Frontend UI Developer</title>
+     7→    <meta name="description" content="Delin B Anish, Frontend UI Developer. Two years of building React applications that are fast, accessible, and a joy to use.">
+     8→    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1' stroke='%230F7A6E' stroke-width='3' stroke-linecap='round'/></svg>">
+     9→    <link rel="preconnect" href="https://fonts.googleapis.com">
+    10→    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    11→    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Instrument+Serif:ital@0;1&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    12→
+    13→    <!-- Tailwind CSS via CDN -->
+    14→    <script src="https://cdn.tailwindcss.com"></script>
+    15→    <script>
+    16→        tailwind.config = {
+    17→            theme: {
+    18→                extend: {
+    19→                    colors: {
+    20→                        paper: '#F1ECDF',
+    21→                        paper2: '#E8E1CE',
+    22→                        ink: '#2B221D',
+    23→                        dark: '#4A3B32',
+    24→                        accent: '#0F7A6E',
+    25→                        tape: '#E4B33F',
+    26→                    },
+    27→                    fontFamily: {
+    28→                        bricolage: ['"Bricolage Grotesque"', 'sans-serif'],
+    29→                        serif: ['"Instrument Serif"', 'serif'],
+    30→                        mono: ['"Space Mono"', 'monospace'],
+    31→                    },
+    32→                    transitionTimingFunction: {
+    33→                        custom: 'cubic-bezier(.22, .9, .3, 1)',
+    34→                    },
+    35→                    keyframes: {
+    36→                        spin: { to: { transform: 'rotate(360deg)' } },
+    37→                        boing: {
+    38→                            '0%': { transform: 'scale(1, 1)' },
+    39→                            '30%': { transform: 'scale(1.18, .78)' },
+    40→                            '60%': { transform: 'scale(.92, 1.12)' },
+    41→                            '100%': { transform: 'scale(1, 1)' }
+    42→                        },
+    43→                        dip: { '50%': { transform: 'translateY(5px)' } },
+    44→                        marq: { to: { transform: 'translateX(-50%)' } },
+    45→                    },
+    46→                    animation: {
+    47→                        spin: 'spin 3s linear infinite',
+    48→                        spinSlow: 'spin 9s linear infinite',
+    49→                        spinVerySlow: 'spin 16s linear infinite',
+    50→                        boing: 'boing .5s cubic-bezier(.22,.9,.3,1)',
+    51→                        dip: 'dip 1.6s ease-in-out infinite',
+    52→                        marquee: 'marq 26s linear infinite',
+    53→                    }
+    54→                }
+    55→            }
+    56→        }
+    57→    </script>
+    58→
+    59→    <script>
+    60→        document.documentElement.classList.add('js')
+    61→    </script>
+    62→    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js">
+    63→    </script>
+    64→    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js">
+    65→    </script>
+    66→
+    67→    <style>
+    68→        /* ============ MINIMAL CUSTOM CSS — only what Tailwind can't do ============ */
+    69→        :root {
+    70→            --paper: #F1ECDF;
+    71→            --paper2: #E8E1CE;
+    72→            --ink: #2B221D;
+    73→            --dark: #4A3B32;
+    74→            --accent: #0F7A6E;
+    75→            --tape: #E4B33F;
+    76→            --fd: 'Bricolage Grotesque', sans-serif;
+    77→            --fs: 'Instrument Serif', serif;
+    78→            --fm: 'Space Mono', monospace;
+    79→            --ease: cubic-bezier(.22, .9, .3, 1);
+    80→        }
+    81→
+    82→        /* Reveal animations */
+    83→        .js .rv {
+    84→            opacity: 0;
+    85→            transform: translateY(28px);
+    86→            transition: opacity .8s var(--ease), transform .8s var(--ease);
+    87→            transition-delay: var(--d, 0s);
+    88→        }
+    89→        .js .rv.on {
+    90→            opacity: 1;
+    91→            transform: none;
+    92→        }
+    93→
+    94→        /* Custom cursor */
+    95→        #cursor {
+    96→            position: fixed;
+    97→            top: 0;
+    98→            left: 0;
+    99→            width: 14px;
+   100→            height: 14px;
+   101→            border-radius: 50%;
+   102→            background: #fff;
+   103→            mix-blend-mode: difference;
+   104→            pointer-events: none;
+   105→            z-index: 400;
+   106→            opacity: 0;
+   107→            transition: opacity .3s;
+   108→            will-change: transform;
+   109→        }
+   110→        #cursor.vis {
+   111→            opacity: 1;
+   112→        }
+   113→        @media (hover: none) {
+   114→            #cursor {
+   115→                display: none;
+   116→            }
+   117→        }
+   118→
+   119→        /* Grain texture */
+   120→        .grain {
+   121→            position: fixed;
+   122→            inset: 0;
+   123→            width: 100%;
+   124→            height: 100%;
+   125→            opacity: .055;
+   126→            pointer-events: none;
+   127→            z-index: 120;
+   128→            mix-blend-mode: multiply;
+   129→        }
+   130→        .frame {
+   131→            position: fixed;
+   132→            inset: 12px;
+   133→            border: 2px solid var(--paper);
+   134→            mix-blend-mode: difference;
+   135→            pointer-events: none;
+   136→            z-index: 115;
+   137→        }
+   138→        @media (max-width: 640px) {
+   139→            .frame {
+   140→                display: none;
+   141→            }
+   142→        }
+   143→
+   144→        /* Loader */
+   145→        .loader {
+   146→            display: none;
+   147→            position: fixed;
+   148→            inset: 0;
+   149→            background: var(--paper);
+   150→            z-index: 300;
+   151→            transition: transform .75s cubic-bezier(.76, 0, .24, 1);
+   152→            cursor: pointer;
+   153→        }
+   154→        .js .loader {
+   155→            display: block;
+   156→        }
+   157→        .loader.done {
+   158→            transform: translateY(-101%);
+   159→            pointer-events: none;
+   160→        }
+   161→        .loader.done .loader-inner {
+   162→            opacity: 0;
+   163→        }
+   164→        .loader-bar i {
+   165→            display: block;
+   166→            height: 100%;
+   167→            background: var(--accent);
+   168→            transform: scaleX(0);
+   169→            transform-origin: left;
+   170→        }
+   171→
+   172→        /* Menu */
+   173→        .menu {
+   174→            position: fixed;
+   175→            inset: 0;
+   176→            background: var(--dark);
+   177→            z-index: 95;
+   178→            color: var(--paper);
+   179→            clip-path: inset(0 0 100% 0);
+   180→            transition: clip-path .6s cubic-bezier(.76, 0, .24, 1);
+   181→            display: flex;
+   182→            flex-direction: column;
+   183→            justify-content: center;
+   184→            padding: 0 6vw;
+   185→        }
+   186→        body.menu-open .menu {
+   187→            clip-path: inset(0 0 0% 0);
+   188→        }
+   189→
+   190→        /* Hero letter splitting */
+   191→        .h-ch {
+   192→            display: inline-block;
+   193→            will-change: transform;
+   194→        }
+   195→        .h-ch.boing {
+   196→            animation: boing .5s var(--ease);
+   197→            color: var(--accent);
+   198→        }
+   199→
+   200→        /* Kerning ticks */
+   201→        .kern-ticks {
+   202→            position: absolute;
+   203→            inset: auto 0 4px 0;
+   204→            height: 8px;
+   205→            background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 10%);
+   206→        }
+   207→        input[type=range] {
+   208→            -webkit-appearance: none;
+   209→            appearance: none;
+   210→            width: 100%;
+   211→            height: 34px;
+   212→            background: transparent;
+   213→            cursor: ew-resize;
+   214→            position: relative;
+   215→            z-index: 2;
+   216→            margin: 0;
+   217→        }
+   218→        input[type=range]::-webkit-slider-runnable-track {
+   219→            height: 2.5px;
+   220→            background: var(--ink);
+   221→        }
+   222→        input[type=range]::-webkit-slider-thumb {
+   223→            -webkit-appearance: none;
+   224→            width: 22px;
+   225→            height: 22px;
+   226→            border-radius: 50%;
+   227→            background: var(--accent);
+   228→            border: 2.5px solid var(--ink);
+   229→            box-shadow: 2.5px 2.5px 0 var(--ink);
+   230→            margin-top: -10px;
+   231→        }
+   232→        input[type=range]::-moz-range-track {
+   233→            height: 2.5px;
+   234→            background: var(--ink);
+   235→        }
+   236→        input[type=range]::-moz-range-thumb {
+   237→            width: 18px;
+   238→            height: 18px;
+   239→            border-radius: 50%;
+   240→            background: var(--accent);
+   241→            border: 2.5px solid var(--ink);
+   242→            box-shadow: 2.5px 2.5px 0 var(--ink);
+   243→        }
+   244→
+   245→        /* Receipt perforation */
+   246→        .receipt::after {
+   247→            content: "";
+   248→            display: block;
+   249→            height: 9px;
+   250→            margin: 1rem -1.7rem -1.4rem;
+   251→            background: conic-gradient(from -45deg at 50% 100%, var(--paper) 90deg, transparent 0) 0 0/16px 9px repeat-x;
+   252→        }
+   253→
+   254→        /* Testimonial tape */
+   255→        .clip::before {
+   256→            content: "";
+   257→            position: absolute;
+   258→            top: -13px;
+   259→            left: 50%;
+   260→            width: 96px;
+   261→            height: 26px;
+   262→            transform: translateX(-50%) rotate(-3deg);
+   263→            background: var(--tape);
+   264→            opacity: .92;
+   265→            box-shadow: 0 2px 5px rgba(0, 0, 0, .14);
+   266→        }
+   267→
+   268→        /* Work preview card */
+   269→        #wpreview {
+   270→            position: fixed;
+   271→            top: 0;
+   272→            left: 0;
+   273→            z-index: 90;
+   274→            pointer-events: none;
+   275→            will-change: transform;
+   276→        }
+   277→        .wpreview-card {
+   278→            width: 340px;
+   279→            aspect-ratio: 3/2;
+   280→            border: 2px solid var(--ink);
+   281→            background: var(--paper);
+   282→            box-shadow: 10px 10px 0 rgba(74, 59, 50, .9);
+   283→            overflow: hidden;
+   284→            transform: translate(-50%, -118%) rotate(-4deg) scale(.75);
+   285→            opacity: 0;
+   286→            transition: opacity .25s, transform .3s var(--ease);
+   287→        }
+   288→        #wpreview.show .wpreview-card {
+   289→            opacity: 1;
+   290→            transform: translate(-50%, -118%) rotate(-4deg) scale(1);
+   291→        }
+   292→        @media (hover: none) {
+   293→            #wpreview {
+   294→                display: none;
+   295→            }
+   296→        }
+   297→
+   298→        /* Modal */
+   299→        .modal {
+   300→            position: fixed;
+   301→            inset: 0;
+   302→            z-index: 180;
+   303→            visibility: hidden;
+   304→        }
+   305→        .modal.open {
+   306→            visibility: visible;
+   307→        }
+   308→        .modal-backdrop {
+   309→            position: absolute;
+   310→            inset: 0;
+   311→            background: rgba(74, 59, 50, .6);
+   312→            opacity: 0;
+   313→            transition: opacity .35s;
+   314→        }
+   315→        .modal.open .modal-backdrop {
+   316→            opacity: 1;
+   317→        }
+   318→        .modal-panel {
+   319→            position: absolute;
+   320→            inset: 2.5vh 3vw;
+   321→            background: var(--paper);
+   322→            border: 2px solid var(--ink);
+   323→            overflow-y: auto;
+   324→            opacity: 0;
+   325→            transform: translateY(34px);
+   326→            transition: opacity .4s, transform .45s var(--ease);
+   327→            box-shadow: 14px 14px 0 rgba(74, 59, 50, .3);
+   328→        }
+   329→        .modal.open .modal-panel {
+   330→            opacity: 1;
+   331→            transform: none;
+   332→        }
+   333→        .modal-close {
+   334→            position: sticky;
+   335→            top: 14px;
+   336→            margin-left: auto;
+   337→            margin-right: 14px;
+   338→            z-index: 5;
+   339→            display: block;
+   340→            border: 2px solid var(--ink);
+   341→            background: var(--paper);
+   342→            padding: .6em 1.1em;
+   343→            width: max-content;
+   344→        }
+   345→
+   346→        /* Toast */
+   347→        #toast {
+   348→            position: fixed;
+   349→            left: 50%;
+   350→            bottom: 30px;
+   351→            z-index: 220;
+   352→            transform: translate(-50%, 24px);
+   353→            background: var(--dark);
+   354→            color: var(--paper);
+   355→            border-left: 5px solid var(--accent);
+   356→            padding: 1em 1.5em;
+   357→            opacity: 0;
+   358→            pointer-events: none;
+   359→            max-width: 88vw;
+   360→            transition: opacity .3s, transform .4s var(--ease);
+   361→        }
+   362→        #toast.show {
+   363→            opacity: 1;
+   364→            transform: translate(-50%, 0);
+   365→        }
+   366→
+   367→        /* Comic Sans easter egg */
+   368→        body.comicsans,
+   369→        body.comicsans * {
+   370→            font-family: 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', cursive !important;
+   371→        }
+   372→
+   373→        /* Body lock */
+   374→        body.lock,
+   375→        body.menu-open {
+   376→            overflow: hidden;
+   377→        }
+   378→
+   379→        /* Barcode */
+   380→        .barcode {
+   381→            height: 44px;
+   382→            margin-top: .9rem;
+   383→            background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 5px, transparent 5px 9px, var(--ink) 9px 12px, transparent 12px 13px, var(--ink) 13px 14px, transparent 14px 18px);
+   384→        }
+   385→
+   386→        /* Work thumbnails (mobile only) */
+   387→        .w-thumb {
+   388→            display: none;
+   389→            width: 100%;
+   390→            aspect-ratio: 16/9;
+   391→            object-fit: cover;
+   392→            margin-top: 1.2rem;
+   393→            border: 1.5px solid currentColor;
+   394→        }
+   395→        @media (max-width: 860px) {
+   396→            .w-thumb {
+   397→                display: block;
+   398→            }
+   399→            #wpreview {
+   400→                display: none;
+   401→            }
+   402→        }
+   403→
+   404→        /* Burger */
+   405→        .burger {
+   406→            display: none;
+   407→            flex-direction: column;
+   408→            gap: 6px;
+   409→            padding: 6px;
+   410→            z-index: 110;
+   411→        }
+   412→        .burger span {
+   413→            display: block;
+   414→            width: 26px;
+   415→            height: 2.5px;
+   416→            background: var(--ink);
+   417→            transition: transform .35s var(--ease), background .3s;
+   418→        }
+   419→        body.menu-open .burger span:first-child {
+   420→            transform: translateY(4.25px) rotate(45deg);
+   421→        }
+   422→        body.menu-open .burger span:last-child {
+   423→            transform: translateY(-4.25px) rotate(-45deg);
+   424→        }
+   425→        body.menu-open .burger span {
+   426→            background: var(--paper);
+   427→        }
+   428→        @media (max-width: 860px) {
+   429→            .burger {
+   430→                display: flex;
+   431→            }
+   432→        }
+   433→
+   434→        /* Service accordion open state */
+   435→        .svc.open .svc-body {
+   436→            grid-template-rows: 1fr;
+   437→        }
+   438→        .svc.open .svc-plus {
+   439→            transform: rotate(45deg);
+   440→            color: var(--accent);
+   441→        }
+   442→
+   443→        /* Nav scrolled state */
+   444→        body.scrolled .nav {
+   445→            background: var(--paper);
+   446→            border-color: var(--ink);
+   447→            padding-top: 0.75rem;
+   448→            padding-bottom: 0.75rem;
+   449→        }
+   450→
+   451→        /* Fix menu open logo background */
+   452→        body.menu-open .nav .logo {
+   453→            color: var(--paper);
+   454→        }
+   455→        body.menu-open .nav .logo svg {
+   456→            color: var(--accent);
+   457→        }
+   458→
+   459→        /* Language switcher button */
+   460→        .lang-switch {
+   461→            font-family: var(--fm);
+   462→            font-weight: bold;
+   463→            font-size: 10px;
+   464→            letter-spacing: .14em;
+   465→            border: 2px solid var(--ink);
+   466→            border-radius: 999px;
+   467→            padding: .4em 1.1em;
+   468→            background: var(--paper);
+   469→            color: var(--ink);
+   470→            cursor: pointer;
+   471→            transition: background .2s, color .2s;
+   472→            text-transform: uppercase;
+   473→        }
+   474→        .lang-switch:hover {
+   475→            background: var(--accent);
+   476→            border-color: var(--accent);
+   477→            color: var(--paper);
+   478→        }
+   479→
+   480→        /* RTL adjustments */
+   481→        html[dir="rtl"] body {
+   482→            text-align: right;
+   483→        }
+   484→        html[dir="rtl"] .nav-links {
+   485→            flex-direction: row-reverse;
+   486→        }
+   487→        html[dir="rtl"] .hero-meta,
+   488→        html[dir="rtl"] .hero-foot {
+   489→            justify-content: flex-end;
+   490→        }
+   491→        html[dir="rtl"] .work-row,
+   492→        html[dir="rtl"] .tl-row,
+   493→        html[dir="rtl"] .svc-head {
+   494→            grid-template-columns: auto 1fr auto;
+   495→        }
+   496→        html[dir="rtl"] .w-arrow {
+   497→            transform: scaleX(-1);
+   498→        }
+   499→
+   500→        /* Reduced motion */
+   501→        @media (prefers-reduced-motion: reduce) {
+   502→            *,
+   503→            *::before,
+   504→            *::after {
+   505→                animation-duration: .01ms !important;
+   506→                animation-iteration-count: 1 !important;
+   507→                transition-duration: .01ms !important;
+   508→            }
+   509→            html {
+   510→                scroll-behavior: auto;
+   511→            }
+   512→        }
+   513→    </style>
+   514→</head>
+   515→<body class="bg-transparent text-ink font-bricolage font-normal text-base leading-relaxed overflow-x-clip antialiased">
+   516→
+   517→    <!-- Particle sphere canvas -->
+   518→    <canvas id="sphereCanvas" aria-hidden="true" class="fixed top-0 left-0 w-screen h-screen -z-10 pointer-events-none"></canvas>
+   519→
+   520→    <!-- texture, frame, cursor -->
+   521→    <svg class="grain" aria-hidden="true"><filter id="grainF"><feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#grainF)"/></svg>
+   522→    <div class="frame" aria-hidden="true"></div>
+   523→    <div id="cursor" aria-hidden="true"></div>
+   524→
+   525→    <!-- loader -->
+   526→    <div class="loader" id="loader" aria-hidden="true">
+   527→        <div class="loader-inner h-full flex flex-col justify-center items-center gap-5 transition-opacity duration-300">
+   528→            <svg class="loader-star w-[38px] h-[38px] text-accent animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+   529→            <div class="loader-line font-mono font-bold text-[11px] tracking-[.18em] uppercase min-h-[1.2em]" id="lLine" data-i18n="loader.line1">warming up the components</div>
+   530→            <div class="loader-pct font-bricolage font-extrabold text-[clamp(4rem,14vw,10rem)] leading-none -tracking-[.04em] tabular-nums" id="lPct">0%</div>
+   531→        </div>
+   532→        <span class="loader-skip absolute bottom-[26px] right-[30px] font-mono font-bold text-[10px] tracking-[.16em] opacity-60" data-i18n="loader.skip">CLICK TO SKIP THE DRAMA</span>
+   533→        <div class="loader-bar absolute bottom-0 left-0 w-full h-[6px]"><i id="lBar"></i></div>
+   534→    </div>
+   535→
+   536→    <!-- nav -->
+   537→    <nav class="nav fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-[4vw] py-[1.1rem] transition-all duration-300 border-b-[1.5px] border-transparent bg-transparent" id="mainNav">
+   538→        <a class="logo flex items-center gap-[.4rem] font-bricolage font-extrabold text-xl -tracking-[.03em]" href="#top">AB<svg class="w-[15px] h-[15px] text-accent transition-transform duration-600 ease-custom hover:rotate-180" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></a>
+   539→        <div class="nav-links hidden md:flex gap-7 items-center">
+   540→            <a href="#work" class="font-mono font-bold text-[11px] tracking-[.14em] uppercase hover:line-through hover:decoration-accent hover:decoration-2" data-i18n="nav.work">Work</a>
+   541→            <a href="#receipt" class="font-mono font-bold text-[11px] tracking-[.14em] uppercase hover:line-through hover:decoration-accent hover:decoration-2" data-i18n="nav.receipt">Receipt</a>
+   542→            <a href="#timeline" class="font-mono font-bold text-[11px] tracking-[.14em] uppercase hover:line-through hover:decoration-accent hover:decoration-2" data-i18n="nav.timeline">Timeline</a>
+   543→            <a href="#proof" class="font-mono font-bold text-[11px] tracking-[.14em] uppercase hover:line-through hover:decoration-accent hover:decoration-2" data-i18n="nav.proof">Proof</a>
+   544→            <a href="#contact" class="font-mono font-bold text-[11px] tracking-[.14em] uppercase hover:line-through hover:decoration-accent hover:decoration-2" data-i18n="nav.contact">Contact</a>
+   545→            <a class="hire font-mono font-bold text-[11px] tracking-[.12em] border-2 border-ink rounded-full px-[1.2em] py-[.6em] transition-colors duration-250 hover:bg-accent hover:border-accent hover:text-paper hover:no-underline" href="#contact" data-i18n="nav.hire">Hire me</a>
+   546→            <button class="lang-switch" id="langSwitch" aria-label="Switch language">EN</button>
+   547→        </div>
+   548→        <button class="burger" id="burger" aria-label="Open menu"><span></span><span></span></button>
+   549→    </nav>
+   550→
+   551→    <!-- mobile menu -->
+   552→    <div class="menu" id="menu" aria-hidden="true">
+   553→        <a class="menu-link flex items-baseline gap-4 py-[.6rem] border-b border-paper/20 font-bricolage font-extrabold text-[clamp(2.2rem,9vw,4.5rem)] leading-[1.05] uppercase -tracking-[.02em] transition-all duration-250 hover:text-accent hover:translate-x-2.5" href="#work"><span class="num font-mono font-bold text-sm text-accent">01</span><span data-i18n="nav.work">Work</span><em class="font-serif italic font-normal text-[.38em] uppercase-none tracking-normal opacity-75" data-i18n="menu.workTag">the projects</em></a>
+   554→        <a class="menu-link flex items-baseline gap-4 py-[.6rem] border-b border-paper/20 font-bricolage font-extrabold text-[clamp(2.2rem,9vw,4.5rem)] leading-[1.05] uppercase -tracking-[.02em] transition-all duration-250 hover:text-accent hover:translate-x-2.5" href="#receipt"><span class="num font-mono font-bold text-sm text-accent">02</span><span data-i18n="nav.receipt">Receipt</span><em class="font-serif italic font-normal text-[.38em] tracking-normal opacity-75" data-i18n="menu.receiptTag">the damage report</em></a>
+   555→        <a class="menu-link flex items-baseline gap-4 py-[.6rem] border-b border-paper/20 font-bricolage font-extrabold text-[clamp(2.2rem,9vw,4.5rem)] leading-[1.05] uppercase -tracking-[.02em] transition-all duration-250 hover:text-accent hover:translate-x-2.5" href="#timeline"><span class="num font-mono font-bold text-sm text-accent">03</span><span data-i18n="nav.timeline">Timeline</span><em class="font-serif italic font-normal text-[.38em] tracking-normal opacity-75" data-i18n="menu.timelineTag">career path</em></a>
+   556→        <a class="menu-link flex items-baseline gap-4 py-[.6rem] border-b border-paper/20 font-bricolage font-extrabold text-[clamp(2.2rem,9vw,4.5rem)] leading-[1.05] uppercase -tracking-[.02em] transition-all duration-250 hover:text-accent hover:translate-x-2.5" href="#proof"><span class="num font-mono font-bold text-sm text-accent">04</span><span data-i18n="nav.proof">Proof</span><em class="font-serif italic font-normal text-[.38em] tracking-normal opacity-75" data-i18n="menu.proofTag">people talk</em></a>
+   557→        <a class="menu-link flex items-baseline gap-4 py-[.6rem] border-b border-paper/20 font-bricolage font-extrabold text-[clamp(2.2rem,9vw,4.5rem)] leading-[1.05] uppercase -tracking-[.02em] transition-all duration-250 hover:text-accent hover:translate-x-2.5" href="#contact"><span class="num font-mono font-bold text-sm text-accent">05</span><span data-i18n="nav.contact">Contact</span><em class="font-serif italic font-normal text-[.38em] tracking-normal opacity-75" data-i18n="menu.contactTag">say hi</em></a>
+   558→        <div class="menu-foot absolute bottom-[26px] left-[6vw] font-mono font-bold text-[10px] tracking-[.2em] opacity-60" data-i18n="menu.foot">EST. 2024 · STILL KERNING</div>
+   559→    </div>
+   560→
+   561→    <main id="top">
+   562→
+   563→        <!-- ============ HERO ============ -->
+   564→        <header class="hero min-h-screen flex flex-col justify-end px-[4vw] pt-[110px] pb-[2.2rem] relative bg-paper/30">
+   565→            <div class="hero-meta flex flex-wrap gap-x-[2.4rem] gap-y-[.7rem] font-mono font-bold text-[10.5px] tracking-[.16em] uppercase" data-hero>
+   566→                <span class="rv" data-hero data-i18n="hero.meta1">PORTFOLIO — FRONTEND UI DEVELOPER</span>
+   567→                <span class="rv" data-hero style="--d:.06s" data-i18n="hero.meta2">EST. 2024</span>
+   568→                <span class="rv" data-hero style="--d:.12s" id="localTime">LOCAL TIME: —</span>
+   569→            </div>
+   570→
+   571→            <h1 class="hero-name mt-[1.6rem] mb-[1.2rem] font-bricolage font-extrabold uppercase">
+   572→                <span class="h-line h-split block text-[clamp(3.9rem,15.5vw,14.5rem)] leading-[.84] -tracking-[.035em] rv" data-hero style="--d:.15s">DELIN B<svg class="h-star inline-block w-[.42em] h-[.42em] text-accent align-super ml-[.06em] animate-spinSlow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span>
+   573→                <span class="h-line h-split block text-[clamp(3.9rem,15.5vw,14.5rem)] leading-[.84] -tracking-[.035em] rv" data-hero style="--d:.24s" id="nameLast">ANISH</span>
+   574→            </h1>
+   575→
+   576→            <div class="hero-low grid grid-cols-1 lg:grid-cols-[1.15fr_.85fr] gap-12 lg:gap-12 items-end mb-[2.4rem]">
+   577→                <div class="hero-intro">
+   578→                    <p class="big font-bricolage font-medium text-[clamp(1.35rem,2.3vw,2rem)] leading-[1.35] max-w-[34ch] -tracking-[.01em] rv" data-hero style="--d:.33s" data-i18n="hero.intro1">Frontend <em class="font-serif italic font-normal text-[1.1em]">UI Developer</em> with 2 years of experience building React.js web applications. I specialize in core front-end technologies and modern React development.</p>
+   579→                    <p class="note font-serif italic font-normal text-[1.05rem] leading-[1.5] opacity-80 mt-4 max-w-[44ch] rv" data-hero style="--d:.4s" data-i18n="hero.intro2">( Anish is my real name. So is the kerning obsession. Drag the slider — I insist. )</p>
+   580→                </div>
+   581→                <div class="kern max-w-[430px] justify-self-start lg:justify-self-end w-full rv" data-hero style="--d:.48s">
+   582→                    <span class="kern-label block font-mono font-bold text-[10.5px] tracking-[.14em] mb-[.7rem] min-h-[1.2em]" id="kernLabel" data-i18n="hero.kernLabel">KERNING: <b class="text-accent">AS GOD INTENDED</b></span>
+   583→                    <div class="kern-track relative h-[34px]">
+   584→                        <div class="kern-ticks" aria-hidden="true"></div>
+   585→                        <input type="range" id="kern" min="0" max="100" value="11" aria-label="Adjust the kerning of my last name. Go on.">
+   586→                    </div>
+   587→                    <div class="kern-ends flex justify-between font-mono font-bold text-[9px] tracking-[.14em] opacity-65 mt-[.4rem] uppercase"><span data-i18n="hero.kernEnd1">SQUISHED</span><span data-i18n="hero.kernEnd2">SOCIAL DISTANCING</span></div>
+   588→                </div>
+   589→            </div>
+   590→
+   591→            <div class="hero-foot flex flex-wrap justify-between gap-x-8 gap-y-3 border-t-[1.5px] border-ink pt-[1.2rem] font-mono font-bold text-[10.5px] tracking-[.16em] uppercase rv" data-hero style="--d:.56s">
+   592→                <span data-i18n="hero.scroll">SCROLL — IT GETS BETTER <svg class="icon dip inline-block w-[1em] h-[1em] align-[-.12em] animate-dip" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+   593→                <span data-i18n="hero.stats">2 YRS · 3+ PROJECTS · 0 REGRETS* <span title="one">(*ZERO)</span></span>
+   594→            </div>
+   595→
+   596→            <div class="badge absolute top-[19vh] right-[5vw] w-[158px] h-[158px] hidden md:block rv" data-hero style="--d:.6s" aria-hidden="true">
+   597→                <svg class="ring w-full h-full animate-spinVerySlow" viewBox="0 0 200 200">
+   598→                    <defs><path id="circ" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0"/></defs>
+   599→                    <text class="font-mono font-bold text-[13.5px] tracking-[3.4px] fill-ink uppercase"><textPath href="#circ" data-i18n="hero.badge">OPEN TO FRONTEND ROLES · REACT SPECIALIST ·</textPath></text>
+   600→                </svg>
+   601→                <div class="core absolute inset-0 grid place-items-center"><svg class="w-[34px] h-[34px] text-accent" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></div>
+   602→            </div>
+   603→        </header>
+   604→
+   605→        <!-- ============ MARQUEE ============ -->
+   606→        <div class="marquee-wrap overflow-hidden py-[2.6rem] relative" aria-hidden="true">
+   607→            <div class="marquee w-[106vw] -ml-[3vw] -rotate-[1.4deg] bg-accent text-paper border-y-2 border-ink overflow-hidden">
+   608→                <div class="marquee-track flex w-max animate-marquee" id="marqTrack">
+   609→                    <div class="marquee-set flex items-center gap-[2.6rem] py-[.95rem] pr-[1.3rem] pl-[2.6rem]">
+   610→                        <span class="font-bricolage font-extrabold text-[1.3rem] uppercase tracking-[.01em] whitespace-nowrap" data-i18n="marquee.exp">2 years experience</span><svg class="w-[17px] h-[17px] flex-none animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+   611→                        <span class="font-bricolage font-extrabold text-[1.3rem] uppercase tracking-[.01em] whitespace-nowrap" data-i18n="marquee.react">React 19</span><svg class="w-[17px] h-[17px] flex-none animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+   612→                        <span class="font-bricolage font-extrabold text-[1.3rem] uppercase tracking-[.01em] whitespace-nowrap" data-i18n="marquee.ts">TypeScript</span><svg class="w-[17px] h-[17px] flex-none animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+   613→                        <span class="font-bricolage font-extrabold text-[1.3rem] uppercase tracking-[.01em] whitespace-nowrap" data-i18n="marquee.tailwind">Tailwind CSS</span><svg class="w-[17px] h-[17px] flex-none animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+   614→                        <span class="font-bricolage font-extrabold text-[1.3rem] uppercase tracking-[.01em] whitespace-nowrap" data-i18n="marquee.redux">Redux Toolkit</span><svg class="w-[17px] h-[17px] flex-none animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+   615→                        <span class="font-bricolage font-extrabold text-[1.3rem] uppercase tracking-[.01em] whitespace-nowrap" data-i18n="marquee.gsap">GSAP</span><svg class="w-[17px] h-[17px] flex-none animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+   616→                        <span class="font-bricolage font-extrabold text-[1.3rem] uppercase tracking-[.01em] whitespace-nowrap" data-i18n="marquee.agile">Agile</span><svg class="w-[17px] h-[17px] flex-none animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+   617→                        <span class="font-bricolage font-extrabold text-[1.3rem] uppercase tracking-[.01em] whitespace-nowrap" data-i18n="marquee.perf">Performance obsessed</span><svg class="w-[17px] h-[17px] flex-none animate-spin" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+   618→                    </div>
+   619→                </div>
+   620→            </div>
+   621→        </div>
+   622→
+   623→        <!-- ============ WORK ============ -->
+   624→        <section id="work" class="py-[7.5rem] px-[4vw]">
+   625→            <div class="shead mb-[3.5rem] max-w-[1100px]">
+   626→                <span class="kicker inline-block font-mono font-bold text-[11px] leading-none tracking-[.16em] border-[1.5px] border-current rounded-full px-[1em] py-[.6em] mb-[1.7rem] uppercase rv" data-i18n="work.kicker">( 01 ) — SELECTED PROJECTS</span>
+   627→                <h2 class="font-bricolage font-extrabold uppercase text-[clamp(2.7rem,7.5vw,7rem)] leading-[.95] -tracking-[.03em] rv" style="--d:.08s"><span data-i18n="work.title1">THE </span><em class="font-serif italic font-normal text-[.95em] normal-case tracking-normal text-accent" data-i18n="work.title2">projects</em></h2>
+   628→                <p class="aside font-serif italic font-normal text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.45] opacity-85 max-w-[52ch] mt-[1.2rem] rv" style="--d:.16s" data-i18n="work.desc">Three projects that showcase my frontend engineering skills, from e-commerce platforms to admin dashboards and educational portals.</p>
+   629→            </div>
+   630→            <ol class="work-list border-b-2 border-ink">
+   631→                <li class="work-row group border-t-2 border-ink cursor-pointer grid grid-cols-[2.2rem_1fr] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-start px-[.4rem] md:px-4 py-[1.8rem] md:py-[2.3rem] transition-colors duration-250 relative hover:bg-dark hover:text-paper focus-visible:bg-dark focus-visible:text-paper focus-visible:outline-none rv" tabindex="0" role="button" aria-haspopup="dialog" data-i="0">
+   632→                    <span class="w-idx font-mono font-bold text-xs text-accent pt-[.5rem]">01</span>
+   633→                    <div>
+   634→                        <h3 class="w-title font-bricolage font-extrabold text-[clamp(1.7rem,4.6vw,4rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3.5" data-i18n="work.proj1.title">E-Commerce Platform</h3>
+   635→                        <p class="w-tag font-serif italic font-normal text-[1.08rem] leading-[1.4] opacity-85 mt-[.55rem] max-w-[52ch]">Qatar Retail — React.js · Redux Toolkit · Tailwind CSS</p>
+   636→                        <img class="w-thumb" src="https://picsum.photos/seed/ecommerce/900/560.jpg" alt="E-commerce platform for Qatar Retail" loading="lazy">
+   637→                    </div>
+   638→                    <div class="w-meta flex flex-col md:flex-row items-start md:items-end gap-2 md:gap-4 font-mono font-bold text-[10.5px] tracking-[.14em] uppercase text-right mt-4 md:mt-0 md:pt-[.5rem] md:text-right">
+   639→                        <span data-i18n="work.proj1.meta">FRONTEND / E-COMMERCE</span><span>2025</span>
+   640→                        <svg class="w-arrow hidden md:block w-[26px] h-[26px] opacity-0 -translate-x-2 translate-y-2 transition-all duration-300 ease-custom text-accent group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   641→                    </div>
+   642→                </li>
+   643→                <li class="work-row group border-t-2 border-ink cursor-pointer grid grid-cols-[2.2rem_1fr] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-start px-[.4rem] md:px-4 py-[1.8rem] md:py-[2.3rem] transition-colors duration-250 relative hover:bg-dark hover:text-paper focus-visible:bg-dark focus-visible:text-paper focus-visible:outline-none rv" tabindex="0" role="button" aria-haspopup="dialog" data-i="1" style="--d:.06s">
+   644→                    <span class="w-idx font-mono font-bold text-xs text-accent pt-[.5rem]">02</span>
+   645→                    <div>
+   646→                        <h3 class="w-title font-bricolage font-extrabold text-[clamp(1.7rem,4.6vw,4rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3.5" data-i18n="work.proj2.title">Admin Panel & Dashboard</h3>
+   647→                        <p class="w-tag font-serif italic font-normal text-[1.08rem] leading-[1.4] opacity-85 mt-[.55rem] max-w-[52ch]">React.js · TypeScript · RTK Query — modular, real-time inventory and analytics.</p>
+   648→                        <img class="w-thumb" src="https://picsum.photos/seed/adminpanel/900/560.jpg" alt="E-commerce admin panel dashboard" loading="lazy">
+   649→                    </div>
+   650→                    <div class="w-meta flex flex-col md:flex-row items-start md:items-end gap-2 md:gap-4 font-mono font-bold text-[10.5px] tracking-[.14em] uppercase text-right mt-4 md:mt-0 md:pt-[.5rem] md:text-right">
+   651→                        <span data-i18n="work.proj2.meta">DASHBOARD / UI</span><span>2024–2025</span>
+   652→                        <svg class="w-arrow hidden md:block w-[26px] h-[26px] opacity-0 -translate-x-2 translate-y-2 transition-all duration-300 ease-custom text-accent group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   653→                    </div>
+   654→                </li>
+   655→                <li class="work-row group border-t-2 border-ink cursor-pointer grid grid-cols-[2.2rem_1fr] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-start px-[.4rem] md:px-4 py-[1.8rem] md:py-[2.3rem] transition-colors duration-250 relative hover:bg-dark hover:text-paper focus-visible:bg-dark focus-visible:text-paper focus-visible:outline-none rv" tabindex="0" role="button" aria-haspopup="dialog" data-i="2" style="--d:.12s">
+   656→                    <span class="w-idx font-mono font-bold text-xs text-accent pt-[.5rem]">03</span>
+   657→                    <div>
+   658→                        <h3 class="w-title font-bricolage font-extrabold text-[clamp(1.7rem,4.6vw,4rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3.5" data-i18n="work.proj3.title">Educational Portal</h3>
+   659→                        <p class="w-tag font-serif italic font-normal text-[1.08rem] leading-[1.4] opacity-85 mt-[.55rem] max-w-[52ch]">React.js · TypeScript · Tailwind CSS · REST APIs — search, filter, and subscription with Razorpay.</p>
+   660→                        <img class="w-thumb" src="https://picsum.photos/seed/eduportal/900/560.jpg" alt="Educational portal with course browsing" loading="lazy">
+   661→                    </div>
+   662→                    <div class="w-meta flex flex-col md:flex-row items-start md:items-end gap-2 md:gap-4 font-mono font-bold text-[10.5px] tracking-[.14em] uppercase text-right mt-4 md:mt-0 md:pt-[.5rem] md:text-right">
+   663→                        <span data-i18n="work.proj3.meta">PORTAL / PAYMENTS</span><span>2024</span>
+   664→                        <svg class="w-arrow hidden md:block w-[26px] h-[26px] opacity-0 -translate-x-2 translate-y-2 transition-all duration-300 ease-custom text-accent group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   665→                    </div>
+   666→                </li>
+   667→            </ol>
+   668→        </section>
+   669→
+   670→        <!-- floating work preview -->
+   671→        <div id="wpreview" aria-hidden="true"><div class="wpreview-card"><img id="wpreviewImg" alt=""></div></div>
+   672→
+   673→        <!-- ============ RECEIPT ============ -->
+   674→        <section id="receipt" class="receipt-sec py-[7.5rem] px-[4vw] bg-dark text-paper">
+   675→            <div class="receipt-grid grid grid-cols-1 lg:grid-cols-[1fr_460px] gap-12 lg:gap-16 items-start">
+   676→                <div>
+   677→                    <div class="shead mb-0">
+   678→                        <span class="kicker inline-block font-mono font-bold text-[11px] leading-none tracking-[.16em] border-[1.5px] border-current rounded-full px-[1em] py-[.6em] mb-[1.7rem] uppercase rv" data-i18n="receipt.kicker">( 02 ) — THE DAMAGE REPORT</span>
+   679→                        <h2 class="font-bricolage font-extrabold uppercase text-[clamp(2.7rem,7.5vw,7rem)] leading-[.95] -tracking-[.03em] rv" style="--d:.08s"><span data-i18n="receipt.title1">TWO YEARS, </span><em class="font-serif italic font-normal text-[.95em] normal-case tracking-normal text-accent" data-i18n="receipt.title2">itemized.</em></h2>
+   680→                        <p class="aside font-serif italic font-normal text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.45] opacity-85 max-w-[52ch] mt-[1.2rem] rv" style="--d:.16s" data-i18n="receipt.desc">Every pull request tells a story. Mine screams. All figures verified by my team lead, who laughed, then asked for more features.</p>
+   681→                    </div>
+   682→                    <p class="fine font-mono font-bold text-[10px] tracking-[.18em] mt-[2.4rem] opacity-55 uppercase rv" style="--d:.24s" data-i18n="receipt.fine">* NO REFUNDS · ALL SALES FINAL · COME AGAIN</p>
+   683→                </div>
+   684→                <div class="receipt bg-paper text-ink font-mono font-normal text-[12.5px] leading-[1.7] px-[1.7rem] pt-[2.2rem] pb-[1.4rem] rotate-[1.8deg] relative shadow-[12px_12px_0_var(--accent)] max-w-[460px] mx-auto w-full rv" style="--d:.2s" role="img" aria-label="A humorous receipt itemizing two years of frontend work">
+   685→                    <div class="r-head text-center tracking-[.08em]"><strong class="block font-bricolage font-extrabold text-[1.35rem] tracking-[.02em]" data-i18n="receipt.head">CAREER RECEIPT</strong>Nº 001<br>DELIN B ANISH · FRONTEND UI DEVELOPER<br>ISSUED: 2024 — STILL PRINTING</div>
+   686→                    <hr class="r-sep border-2 border-dashed border-ink my-[.9rem]">
+   687→                    <div class="ritem flex items-baseline gap-[.5rem] uppercase"><span data-i18n="receipt.item1">Projects delivered</span><span class="dots flex-1 border-b-2 border-dotted border-ink -translate-y-1"></span><b class="font-bold whitespace-nowrap">3+</b></div>
+   688→                    <div class="ritem flex items-baseline gap-[.5rem] uppercase"><span data-i18n="receipt.item2">React components built</span><span class="dots flex-1 border-b-2 border-dotted border-ink -translate-y-1"></span><b class="font-bold whitespace-nowrap" data-i18n="receipt.item2val">hundreds</b></div>
+   689→                    <div class="ritem flex items-baseline gap-[.5rem] uppercase"><span data-i18n="receipt.item3">Bugs fixed</span><span class="dots flex-1 border-b-2 border-dotted border-ink -translate-y-1"></span><b class="font-bold whitespace-nowrap" data-i18n="receipt.item3val">many</b></div>
+   690→                    <div class="ritem flex items-baseline gap-[.5rem] uppercase"><span data-i18n="receipt.item4">Console errors shipped</span><span class="dots flex-1 border-b-2 border-dotted border-ink -translate-y-1"></span><b class="font-bold whitespace-nowrap">0</b></div>
+   691→                    <div class="ritem flex items-baseline gap-[.5rem] uppercase"><span data-i18n="receipt.item5">npm packages installed</span><span class="dots flex-1 border-b-2 border-dotted border-ink -translate-y-1"></span><b class="font-bold whitespace-nowrap" data-i18n="receipt.item5val">thousands</b></div>
+   692→                    <div class="ritem flex items-baseline gap-[.5rem] uppercase"><span data-i18n="receipt.item6">Redux slices created</span><span class="dots flex-1 border-b-2 border-dotted border-ink -translate-y-1"></span><b class="font-bold whitespace-nowrap">12</b></div>
+   693→                    <div class="ritem flex items-baseline gap-[.5rem] uppercase"><span data-i18n="receipt.item7">Coffee (litres)</span><span class="dots flex-1 border-b-2 border-dotted border-ink -translate-y-1"></span><b class="font-bold whitespace-nowrap">~500</b></div>
+   694→                    <div class="ritem flex items-baseline gap-[.5rem] uppercase"><span data-i18n="receipt.item8">Meetings survived</span><span class="dots flex-1 border-b-2 border-dotted border-ink -translate-y-1"></span><b class="font-bold whitespace-nowrap" data-i18n="receipt.item8val">countless</b></div>
+   695→                    <hr class="r-sep border-2 border-dashed border-ink my-[.9rem]">
+   696→                    <div class="r-total font-bricolage font-extrabold text-[1rem] uppercase flex justify-between tracking-[.02em]"><span data-i18n="receipt.subtotal">SUBTOTAL</span><span data-i18n="receipt.subtotalVal">EXPERIENCE</span></div>
+   697→                    <div class="r-total font-bricolage font-extrabold text-[1rem] uppercase flex justify-between tracking-[.02em]"><span data-i18n="receipt.vat">VAT (TRAUMA, IE11)</span><span data-i18n="receipt.vatVal">INCLUDED</span></div>
+   698→                    <hr class="r-sep border-2 border-dashed border-ink my-[.9rem]">
+   699→                    <div class="r-total font-bricolage font-extrabold text-[1rem] uppercase flex justify-between tracking-[.02em]"><span data-i18n="receipt.total">TOTAL</span><span class="text-accent" data-i18n="receipt.totalVal">2 YEARS</span></div>
+   700→                    <div class="stamp absolute top-[46%] -right-[14px] -rotate-[13deg] border-[3.5px] border-accent text-accent font-bricolage font-extrabold text-[1.05rem] tracking-[.06em] uppercase px-[.7em] py-[.35em] opacity-92 bg-paper/60" data-i18n="receipt.stamp">2 yrs service</div>
+   701→                    <div class="barcode" aria-hidden="true"></div>
+   702→                    <div class="r-code text-center text-[10px] tracking-[.3em] mt-[.35rem]" data-i18n="receipt.code">ANISH-2024-∞ · VALID IN THIS DIMENSION</div>
+   703→                    <div class="r-legal text-center text-[10px] tracking-[.12em] mt-[.7rem] uppercase opacity-75" data-i18n="receipt.legal">* NO REFUNDS · THANK YOU · COME AGAIN *</div>
+   704→                </div>
+   705→            </div>
+   706→        </section>
+   707→
+   708→        <!-- ============ TIMELINE ============ -->
+   709→        <section id="timeline" class="py-[7.5rem] px-[4vw]">
+   710→            <div class="shead mb-[3.5rem] max-w-[1100px]">
+   711→                <span class="kicker inline-block font-mono font-bold text-[11px] leading-none tracking-[.16em] border-[1.5px] border-current rounded-full px-[1em] py-[.6em] mb-[1.7rem] uppercase rv" data-i18n="timeline.kicker">( 03 ) — CAREER TIMELINE</span>
+   712→                <h2 class="font-bricolage font-extrabold uppercase text-[clamp(2.7rem,7.5vw,7rem)] leading-[.95] -tracking-[.03em] rv" style="--d:.08s"><span data-i18n="timeline.title1">A BRIEF HISTORY OF </span><em class="font-serif italic font-normal text-[.95em] normal-case tracking-normal text-accent" data-i18n="timeline.title2">my growth</em></h2>
+   713→                <p class="aside font-serif italic font-normal text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.45] opacity-85 max-w-[52ch] mt-[1.2rem] rv" style="--d:.16s" data-i18n="timeline.desc">Two years of frontend development, from internship to full-time engineer. The learning never stops.</p>
+   714→            </div>
+   715→            <ol class="tl border-b-[1.5px] border-ink">
+   716→                <li class="tl-row grid grid-cols-1 md:grid-cols-[minmax(96px,150px)_1fr] gap-2 md:gap-8 border-t-[1.5px] border-ink px-[.6rem] py-[2rem] transition-transform duration-300 ease-custom hover:translate-x-2.5 rv"><span class="tl-year font-mono font-bold text-[1.05rem] text-accent">2024</span><div><h3 class="tl-title font-bricolage font-extrabold text-[1.4rem] uppercase -tracking-[.01em] flex items-center gap-[.8rem] flex-wrap" data-i18n="timeline.t1">Graduation & First Internship</h3><p class="tl-text max-w-[62ch] mt-[.45rem] text-[1.02rem] opacity-88" data-i18n="timeline.t1d">Completed B.E. in Electronics and Communication Engineering. Joined Spangles Infotech as a frontend apprentice, discovered my love for React.</p></div></li>
+   717→                <li class="tl-row grid grid-cols-1 md:grid-cols-[minmax(96px,150px)_1fr] gap-2 md:gap-8 border-t-[1.5px] border-ink px-[.6rem] py-[2rem] transition-transform duration-300 ease-custom hover:translate-x-2.5 rv" style="--d:.05s"><span class="tl-year font-mono font-bold text-[1.05rem] text-accent">2024–2025</span><div><h3 class="tl-title font-bricolage font-extrabold text-[1.4rem] uppercase -tracking-[.01em] flex items-center gap-[.8rem] flex-wrap" data-i18n="timeline.t2">Frontend Developer (Apprenticeship)</h3><p class="tl-text max-w-[62ch] mt-[.45rem] text-[1.02rem] opacity-88" data-i18n="timeline.t2d">Built hospital admin panels, learned React performance optimization, and wrote my first test suites with Jest and React Testing Library.</p></div></li>
+   718→                <li class="tl-row grid grid-cols-1 md:grid-cols-[minmax(96px,150px)_1fr] gap-2 md:gap-8 border-t-[1.5px] border-ink px-[.6rem] py-[2rem] transition-transform duration-300 ease-custom hover:translate-x-2.5 rv" style="--d:.05s"><span class="tl-year font-mono font-bold text-[1.05rem] text-accent">2025</span><div><h3 class="tl-title font-bricolage font-extrabold text-[1.4rem] uppercase -tracking-[.01em] flex items-center gap-[.8rem] flex-wrap" data-i18n="timeline.t3">Frontend Software Engineer</h3><p class="tl-text max-w-[62ch] mt-[.45rem] text-[1.02rem] opacity-88" data-i18n="timeline.t3d">Joined Tech Technologies Pvt Ltd. Improved checkout performance, integrated Razorpay, and worked with Redux Toolkit & RTK Query.</p></div></li>
+   719→                <li class="tl-row grid grid-cols-1 md:grid-cols-[minmax(96px,150px)_1fr] gap-2 md:gap-8 border-t-[1.5px] border-ink px-[.6rem] py-[2rem] transition-transform duration-300 ease-custom hover:translate-x-2.5 rv" style="--d:.05s"><span class="tl-year font-mono font-bold text-[1.05rem] text-accent">2026</span><div><h3 class="tl-title font-bricolage font-extrabold text-[1.4rem] uppercase -tracking-[.01em] flex items-center gap-[.8rem] flex-wrap"><span data-i18n="timeline.t4">You Are Here</span> <span class="here-tag font-mono font-bold text-[9px] tracking-[.16em] border-[1.5px] border-accent text-accent rounded-full px-[.8em] py-[.35em]" data-i18n="timeline.current">CURRENT LOCATION</span></h3><p class="tl-text max-w-[62ch] mt-[.45rem] text-[1.02rem] opacity-88" data-i18n="timeline.t4d">Still building, still learning, still arguing about the best state management library. This website is proof of life.</p></div></li>
+   720→            </ol>
+   721→        </section>
+   722→
+   723→        <!-- ============ SERVICES / SKILLS ============ -->
+   724→        <section id="services" class="py-[7.5rem] px-[4vw]">
+   725→            <div class="shead mb-[3.5rem] max-w-[1100px]">
+   726→                <span class="kicker inline-block font-mono font-bold text-[11px] leading-none tracking-[.16em] border-[1.5px] border-current rounded-full px-[1em] py-[.6em] mb-[1.7rem] uppercase rv" data-i18n="skills.kicker">( 04 ) — SKILLS</span>
+   727→                <h2 class="font-bricolage font-extrabold uppercase text-[clamp(2.7rem,7.5vw,7rem)] leading-[.95] -tracking-[.03em] rv" style="--d:.08s"><span data-i18n="skills.title1">WHAT I DO </span><em class="font-serif italic font-normal text-[.95em] normal-case tracking-normal text-accent" data-i18n="skills.title2">(my toolkit)</em></h2>
+   728→                <p class="aside font-serif italic font-normal text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.45] opacity-85 max-w-[52ch] mt-[1.2rem] rv" style="--d:.16s" data-i18n="skills.desc">Click around. Everything is expandable, including the skill set.</p>
+   729→            </div>
+   730→            <div class="svc group border-t-2 border-ink rv">
+   731→                <button class="svc-head w-full grid grid-cols-[2.2rem_1fr_auto] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-center px-4 py-[1.7rem] text-left" aria-expanded="false"><span class="svc-idx font-mono font-bold text-xs text-accent">01</span><span class="svc-name font-bricolage font-extrabold text-[clamp(1.5rem,4vw,3.1rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3" data-i18n="skills.s1">React Development</span>
+   732→                    <svg class="svc-plus w-[30px] h-[30px] transition-transform duration-400 ease-custom flex-none" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+   733→                <div class="svc-body grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-custom"><div class="overflow-hidden"><div class="svc-inner px-4 md:px-[calc(3.6rem+1.6rem+1rem)] pb-[2rem] max-w-[70ch]">
+   734→                            <p class="text-[1.05rem] opacity-90" data-i18n="skills.s1d">Building scalable, maintainable interfaces with React 19, Next.js, and modern patterns. Reusable components, hooks, and performance-conscious code.</p>
+   735→                            <div class="inc flex flex-wrap gap-[.5rem] mt-4"><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">React 19</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Next.js</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Hooks</span></div>
+   736→                        </div></div></div>
+   737→            </div>
+   738→            <div class="svc group border-t-2 border-ink rv" style="--d:.05s">
+   739→                <button class="svc-head w-full grid grid-cols-[2.2rem_1fr_auto] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-center px-4 py-[1.7rem] text-left" aria-expanded="false"><span class="svc-idx font-mono font-bold text-xs text-accent">02</span><span class="svc-name font-bricolage font-extrabold text-[clamp(1.5rem,4vw,3.1rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3" data-i18n="skills.s2">UI Engineering & Accessibility</span>
+   740→                    <svg class="svc-plus w-[30px] h-[30px] transition-transform duration-400 ease-custom flex-none" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+   741→                <div class="svc-body grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-custom"><div class="overflow-hidden"><div class="svc-inner px-4 md:px-[calc(3.6rem+1.6rem+1rem)] pb-[2rem] max-w-[70ch]">
+   742→                            <p class="text-[1.05rem] opacity-90" data-i18n="skills.s2d">Crafting responsive, WCAG-compliant interfaces with Tailwind CSS, Ant Design, and Material UI. Clean HTML5, modern CSS3, and ARIA best practices.</p>
+   743→                            <div class="inc flex flex-wrap gap-[.5rem] mt-4"><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Tailwind</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Ant Design</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">WCAG</span></div>
+   744→                        </div></div></div>
+   745→            </div>
+   746→            <div class="svc group border-t-2 border-ink rv" style="--d:.1s">
+   747→                <button class="svc-head w-full grid grid-cols-[2.2rem_1fr_auto] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-center px-4 py-[1.7rem] text-left" aria-expanded="false"><span class="svc-idx font-mono font-bold text-xs text-accent">03</span><span class="svc-name font-bricolage font-extrabold text-[clamp(1.5rem,4vw,3.1rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3" data-i18n="skills.s3">State Management</span>
+   748→                    <svg class="svc-plus w-[30px] h-[30px] transition-transform duration-400 ease-custom flex-none" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+   749→                <div class="svc-body grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-custom"><div class="overflow-hidden"><div class="svc-inner px-4 md:px-[calc(3.6rem+1.6rem+1rem)] pb-[2rem] max-w-[70ch]">
+   750→                            <p class="text-[1.05rem] opacity-90" data-i18n="skills.s3d">Managing complex state with Redux Toolkit, RTK Query, Zustand, and TanStack Query. Efficient data fetching, caching, and normalized stores.</p>
+   751→                            <div class="inc flex flex-wrap gap-[.5rem] mt-4"><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Redux Toolkit</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">RTK Query</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Zustand</span></div>
+   752→                        </div></div></div>
+   753→            </div>
+   754→            <div class="svc group border-t-2 border-ink rv" style="--d:.15s">
+   755→                <button class="svc-head w-full grid grid-cols-[2.2rem_1fr_auto] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-center px-4 py-[1.7rem] text-left" aria-expanded="false"><span class="svc-idx font-mono font-bold text-xs text-accent">04</span><span class="svc-name font-bricolage font-extrabold text-[clamp(1.5rem,4vw,3.1rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3" data-i18n="skills.s4">Performance Optimization</span>
+   756→                    <svg class="svc-plus w-[30px] h-[30px] transition-transform duration-400 ease-custom flex-none" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+   757→                <div class="svc-body grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-custom"><div class="overflow-hidden"><div class="svc-inner px-4 md:px-[calc(3.6rem+1.6rem+1rem)] pb-[2rem] max-w-[70ch]">
+   758→                            <p class="text-[1.05rem] opacity-90" data-i18n="skills.s4d">Improving load times and Core Web Vitals through code splitting, lazy loading, bundle analysis, and caching strategies. Performance is a feature.</p>
+   759→                            <div class="inc flex flex-wrap gap-[.5rem] mt-4"><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">React.lazy</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Lighthouse</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Bundle analysis</span></div>
+   760→                        </div></div></div>
+   761→            </div>
+   762→            <div class="svc group border-t-2 border-b-2 border-ink rv" style="--d:.2s">
+   763→                <button class="svc-head w-full grid grid-cols-[2.2rem_1fr_auto] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-center px-4 py-[1.7rem] text-left" aria-expanded="false"><span class="svc-idx font-mono font-bold text-xs text-accent">05</span><span class="svc-name font-bricolage font-extrabold text-[clamp(1.5rem,4vw,3.1rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3" data-i18n="skills.s5">Testing & Quality</span>
+   764→                    <svg class="svc-plus w-[30px] h-[30px] transition-transform duration-400 ease-custom flex-none" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+   765→                <div class="svc-body grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-custom"><div class="overflow-hidden"><div class="svc-inner px-4 md:px-[calc(3.6rem+1.6rem+1rem)] pb-[2rem] max-w-[70ch]">
+   766→                            <p class="text-[1.05rem] opacity-90" data-i18n="skills.s5d">Writing robust test suites with Jest, React Testing Library, and Vitest to catch bugs early and ensure UI stability.</p>
+   767→                            <div class="inc flex flex-wrap gap-[.5rem] mt-4"><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Jest</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">RTL</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Vitest</span></div>
+   768→                        </div></div></div>
+   769→            </div>
+   770→        </section>
+   771→
+   772→        <!-- ============ TESTIMONIALS ============ -->
+   773→        <section id="proof" class="proof-sec py-[7.5rem] px-[4vw] bg-paper2">
+   774→            <div class="shead mb-[3.5rem] max-w-[1100px]">
+   775→                <span class="kicker inline-block font-mono font-bold text-[11px] leading-none tracking-[.16em] border-[1.5px] border-current rounded-full px-[1em] py-[.6em] mb-[1.7rem] uppercase rv" data-i18n="proof.kicker">( 05 ) — PROOF</span>
+   776→                <h2 class="font-bricolage font-extrabold uppercase text-[clamp(2.7rem,7.5vw,7rem)] leading-[.95] -tracking-[.03em] rv" style="--d:.08s"><span data-i18n="proof.title1">PEOPLE </span><em class="font-serif italic font-normal text-[.95em] normal-case tracking-normal text-accent" data-i18n="proof.title2">talk.</em></h2>
+   777→                <p class="aside font-serif italic font-normal text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.45] opacity-85 max-w-[52ch] mt-[1.2rem] rv" style="--d:.16s" data-i18n="proof.desc">Real quotes from real clients and colleagues. No further questions, your honour.</p>
+   778→            </div>
+   779→            <div class="clips columns-1 md:columns-2 lg:columns-3 gap-8">
+   780→                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q1">Anish said 'it depends' for forty-five minutes. Then fixed it in five.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q1who">— A REAL CLIENT <b class="text-accent">*</b></figcaption></figure>
+   781→                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv" style="--d:.06s"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q2">We asked for a dashboard. We received a dashboard, a lecture on performance, and our best quarter ever.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q2who">— HAPPY, SOMEWHAT</figcaption></figure>
+   782→                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv" style="--d:.12s"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q3">He refused to use jQuery. He was right.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q3who">— STILL SCARRED</figcaption></figure>
+   783→                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv" style="--d:.06s"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q4">Our app loads before we finish saying 'our app loads'.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q4who">— IMPATIENT INC.</figcaption></figure>
+   784→                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv" style="--d:.12s"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q5">10/10. Would argue about CSS specificity again.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q5who">— GRAYSCALE LLC</figcaption></figure>
+   785→                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv" style="--d:.18s"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q6">He optimized our bundle. Page speed is up 40%. Coincidence? Probably. We don't care.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q6who">— FONT ENTHUSIASTS MONTHLY</figcaption></figure>
+   786→            </div>
+   787→            <p class="clips-note font-mono font-bold text-[10px] tracking-[.16em] uppercase opacity-60 mt-4 rv" data-i18n="proof.note">* names withheld for legal reasons (mine)</p>
+   788→        </section>
+   789→
+   790→        <!-- ============ CONTACT ============ -->
+   791→        <section id="contact" class="contact-sec py-[7.5rem] px-[4vw] bg-accent text-paper">
+   792→            <span class="kicker inline-block font-mono font-bold text-[11px] leading-none tracking-[.16em] border-[1.5px] border-current rounded-full px-[1em] py-[.6em] mb-[1.7rem] uppercase rv" data-i18n="contact.kicker">( 06 ) — CONTACT</span>
+   793→            <h2 class="font-bricolage font-extrabold uppercase text-[clamp(4rem,14vw,13rem)] leading-[.95] -tracking-[.03em] rv" style="--d:.08s"><span data-i18n="contact.title1">SAY </span><em class="font-serif italic font-normal text-[.95em] normal-case tracking-normal text-paper" data-i18n="contact.title2">hi.</em></h2>
+   794→            <p class="contact-sub font-bricolage font-medium text-[clamp(1.1rem,1.8vw,1.45rem)] leading-[1.5] max-w-[52ch] mt-[1.4rem] text-paper rv" style="--d:.16s" data-i18n="contact.desc">Good briefs welcome. Dancing babies are not. I reply faster than this website loads — which, admittedly, is a low bar while the kerning slider is involved.</p>
+   795→            <button class="email-btn inline-flex items-center gap-[.7rem] mt-[2.6rem] font-mono font-bold text-[clamp(1.15rem,3vw,2.1rem)] -tracking-[.02em] border-b-[3px] border-paper pb-[.25em] text-paper transition-colors duration-250 hover:bg-paper hover:text-accent rv" id="emailBtn" style="--d:.24s">delinbanish@gmail.com
+   796→                <svg class="w-[.85em] h-[.85em]" viewBox="0 0 24 24" fill="none"><rect x="8" y="8" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4H5.5A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8" stroke="currentColor" stroke-width="2"/></svg>
+   797→            </button>
+   798→            <div class="socials flex flex-wrap gap-6 mt-12 rv" style="--d:.3s">
+   799→                <a href="https://linkedin.com/in/anish" target="_blank" rel="noopener" class="font-mono font-bold text-[11px] tracking-[.16em] inline-flex items-center gap-[.4rem] text-paper hover:line-through hover:decoration-paper hover:decoration-2">LINKEDIN <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+   800→                <a href="https://github.com" target="_blank" rel="noopener" class="font-mono font-bold text-[11px] tracking-[.16em] inline-flex items-center gap-[.4rem] text-paper hover:line-through hover:decoration-paper hover:decoration-2">GITHUB <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+   801→                <a href="https://twitter.com" target="_blank" rel="noopener" class="font-mono font-bold text-[11px] tracking-[.16em] inline-flex items-center gap-[.4rem] text-paper hover:line-through hover:decoration-paper hover:decoration-2">TWITTER <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+   802→                <a href="mailto:delinbanish@gmail.com" class="font-mono font-bold text-[11px] tracking-[.16em] inline-flex items-center gap-[.4rem] text-paper hover:line-through hover:decoration-paper hover:decoration-2">EMAIL <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+   803→            </div>
+   804→            <p class="contact-note font-mono font-bold text-[10px] tracking-[.18em] uppercase mt-[3.2rem] opacity-85 text-paper rv" style="--d:.36s" data-i18n="contact.note">CURRENTLY OPEN TO: FRONTEND ROLES · CURRENTLY AVOIDING: "QUICK FIXES"</p>
+   805→        </section>
+   806→
+   807→        <footer class="py-[2.2rem] px-[4vw] border-t-2 border-ink flex flex-wrap gap-y-5 gap-x-12 justify-center md:justify-between items-center font-mono font-bold text-[10px] tracking-[.14em] uppercase">
+   808→            <span class="text-center" data-i18n="footer.copyright">© 2024–2026 DELIN B ANISH. ALL RIGHTS RESERVED, INCLUDING THE RIGHT TO REMAIN KERNING.</span>
+   809→            <nav class="fnav flex gap-6 flex-wrap justify-center">
+   810→                <a href="#work" class="hover:line-through hover:decoration-accent" data-i18n="nav.work">WORK</a><a href="#receipt" class="hover:line-through hover:decoration-accent" data-i18n="nav.receipt">RECEIPT</a><a href="#timeline" class="hover:line-through hover:decoration-accent" data-i18n="nav.timeline">TIMELINE</a><a href="#contact" class="hover:line-through hover:decoration-accent" data-i18n="nav.contact">CONTACT</a>
+   811→            </nav>
+   812→            <button id="dontPress" class="font-mono font-bold text-[10px] tracking-[.16em] text-accent border-2 border-accent px-[1.1em] py-[.6em] rounded-full transition-colors duration-250 hover:bg-accent hover:text-paper active:scale-95" data-i18n="footer.dontPress">DO NOT PRESS</button>
+   813→        </footer>
+   814→    </main>
+   815→
+   816→    <!-- ============ PROJECT MODAL ============ -->
+   817→    <div class="modal" id="modal" aria-hidden="true">
+   818→        <div class="modal-backdrop" data-close></div>
+   819→        <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+   820→            <button class="modal-close font-mono font-bold text-[11px] tracking-[.14em] hover:bg-dark hover:text-paper transition-colors duration-250" id="mClose" data-close data-i18n="modal.close">CLOSE — RUN AWAY</button>
+   821→            <div class="modal-inner grid gap-10 lg:gap-[2.6rem] px-5 md:px-12 pb-8 md:pb-12 max-w-[1300px] mx-auto lg:grid-cols-[1.05fr_1fr] lg:items-start">
+   822→                <div class="modal-media"><img id="mImg" class="w-full aspect-[4/3] object-cover border-2 border-ink" alt=""></div>
+   823→                <div class="modal-body">
+   824→                    <span class="m-meta font-mono font-bold text-[10.5px] tracking-[.16em] text-accent uppercase" id="mMeta"></span>
+   825→                    <h3 class="font-bricolage font-extrabold text-[clamp(1.9rem,4vw,3.4rem)] leading-none uppercase -tracking-[.02em] mt-[.7rem] mb-[1.8rem]" id="mTitle"></h3>
+   826→                    <div class="m-grid grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+   827→                        <div><h4 class="font-mono font-bold text-[10px] tracking-[.18em] text-accent uppercase mb-[.45rem]" data-i18n="modal.brief">THE BRIEF</h4><p class="text-[.98rem] leading-[1.55]" id="mBrief"></p></div>
+   828→                        <div><h4 class="font-mono font-bold text-[10px] tracking-[.18em] text-accent uppercase mb-[.45rem]" data-i18n="modal.outcome">THE OUTCOME</h4><p class="text-[.98rem] leading-[1.55]" id="mOutcome"></p></div>
+   829→                        <div><h4 class="font-mono font-bold text-[10px] tracking-[.18em] text-accent uppercase mb-[.45rem]" data-i18n="modal.quote">CLIENT QUOTE</h4><p class="quote font-serif italic font-normal text-[1.1rem]" id="mQuote"></p></div>
+   830→                        <div><h4 class="font-mono font-bold text-[10px] tracking-[.18em] text-accent uppercase mb-[.45rem]" data-i18n="modal.lesson">LESSON LEARNED</h4><p class="text-[.98rem] leading-[1.55]" id="mLesson"></p></div>
+   831→                    </div>
+   832→                    <a id="mAsk" href="#" class="inline-flex items-center gap-[.5rem] mt-8 font-mono font-bold text-[12px] tracking-[.14em] border-2 border-ink px-[1.4em] py-[.9em] rounded-full transition-colors duration-250 hover:bg-accent hover:border-accent hover:text-paper" data-i18n="modal.ask">ASK ME ABOUT IT — SERIOUSLY <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+   833→                </div>
+   834→            </div>
+   835→        </div>
+   836→    </div>
+   837→
+   838→    <div id="toast" role="status" aria-live="polite" class="font-mono font-bold text-[11.5px] tracking-[.1em] uppercase"></div>
+   839→
+   840→    <script>
+   841→        (function() {
+   842→            'use strict';
+   843→            const $ = s => document.querySelector(s),
+   844→                $$ = s => [...document.querySelectorAll(s)];
+   845→            const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+   846→            const img = (seed, w, h) => 'https://picsum.photos/seed/' + seed + '/' + w + '/' + h + '.jpg';
+   847→
+   848→            /* ============ TRANSLATION SYSTEM ============ */
+   849→            const translations = {
+   850→                en: {
+   851→                    // loader
+   852→                    'loader.line1': 'warming up the components',
+   853→                    'loader.skip': 'CLICK TO SKIP THE DRAMA',
+   854→                    // nav
+   855→                    'nav.work': 'Work',
+   856→                    'nav.receipt': 'Receipt',
+   857→                    'nav.timeline': 'Timeline',
+   858→                    'nav.proof': 'Proof',
+   859→                    'nav.contact': 'Contact',
+   860→                    'nav.hire': 'Hire me',
+   861→                    // menu tags
+   862→                    'menu.workTag': 'the projects',
+   863→                    'menu.receiptTag': 'the damage report',
+   864→                    'menu.timelineTag': 'career path',
+   865→                    'menu.proofTag': 'people talk',
+   866→                    'menu.contactTag': 'say hi',
+   867→                    'menu.foot': 'EST. 2024 · STILL KERNING',
+   868→                    // hero
+   869→                    'hero.meta1': 'PORTFOLIO — FRONTEND UI DEVELOPER',
+   870→                    'hero.meta2': 'EST. 2024',
+   871→                    'hero.intro1': 'Frontend <em class="font-serif italic font-normal text-[1.1em]">UI Developer</em> with 2 years of experience building React.js web applications. I specialize in core front-end technologies and modern React development.',
+   872→                    'hero.intro2': '( Anish is my real name. So is the kerning obsession. Drag the slider — I insist. )',
+   873→                    'hero.kernLabel': 'KERNING: <b class="text-accent">AS GOD INTENDED</b>',
+   874→                    'hero.kernEnd1': 'SQUISHED',
+   875→                    'hero.kernEnd2': 'SOCIAL DISTANCING',
+   876→                    'hero.scroll': 'SCROLL — IT GETS BETTER',
+   877→                    'hero.stats': '2 YRS · 3+ PROJECTS · 0 REGRETS* (*ZERO)',
+   878→                    'hero.badge': 'OPEN TO FRONTEND ROLES · REACT SPECIALIST ·',
+   879→                    // marquee
+   880→                    'marquee.exp': '2 years experience',
+   881→                    'marquee.react': 'React 19',
+   882→                    'marquee.ts': 'TypeScript',
+   883→                    'marquee.tailwind': 'Tailwind CSS',
+   884→                    'marquee.redux': 'Redux Toolkit',
+   885→                    'marquee.gsap': 'GSAP',
+   886→                    'marquee.agile': 'Agile',
+   887→                    'marquee.perf': 'Performance obsessed',
+   888→                    // work
+   889→                    'work.kicker': '( 01 ) — SELECTED PROJECTS',
+   890→                    'work.title1': 'THE ',
+   891→                    'work.title2': 'projects',
+   892→                    'work.desc': 'Three projects that showcase my frontend engineering skills, from e-commerce platforms to admin dashboards and educational portals.',
+   893→                    'work.proj1.title': 'E-Commerce Platform',
+   894→                    'work.proj1.meta': 'FRONTEND / E-COMMERCE',
+   895→                    'work.proj2.title': 'Admin Panel & Dashboard',
+   896→                    'work.proj2.meta': 'DASHBOARD / UI',
+   897→                    'work.proj3.title': 'Educational Portal',
+   898→                    'work.proj3.meta': 'PORTAL / PAYMENTS',
+   899→                    // receipt
+   900→                    'receipt.kicker': '( 02 ) — THE DAMAGE REPORT',
+   901→                    'receipt.title1': 'TWO YEARS, ',
+   902→                    'receipt.title2': 'itemized.',
+   903→                    'receipt.desc': 'Every pull request tells a story. Mine screams. All figures verified by my team lead, who laughed, then asked for more features.',
+   904→                    'receipt.fine': '* NO REFUNDS · ALL SALES FINAL · COME AGAIN',
+   905→                    'receipt.head': 'CAREER RECEIPT',
+   906→                    'receipt.item1': 'Projects delivered',
+   907→                    'receipt.item2': 'React components built',
+   908→                    'receipt.item2val': 'hundreds',
+   909→                    'receipt.item3': 'Bugs fixed',
+   910→                    'receipt.item3val': 'many',
+   911→                    'receipt.item4': 'Console errors shipped',
+   912→                    'receipt.item5': 'npm packages installed',
+   913→                    'receipt.item5val': 'thousands',
+   914→                    'receipt.item6': 'Redux slices created',
+   915→                    'receipt.item7': 'Coffee (litres)',
+   916→                    'receipt.item8': 'Meetings survived',
+   917→                    'receipt.item8val': 'countless',
+   918→                    'receipt.subtotal': 'SUBTOTAL',
+   919→                    'receipt.subtotalVal': 'EXPERIENCE',
+   920→                    'receipt.vat': 'VAT (TRAUMA, IE11)',
+   921→                    'receipt.vatVal': 'INCLUDED',
+   922→                    'receipt.total': 'TOTAL',
+   923→                    'receipt.totalVal': '2 YEARS',
+   924→                    'receipt.stamp': '2 yrs service',
+   925→                    'receipt.code': 'ANISH-2024-∞ · VALID IN THIS DIMENSION',
+   926→                    'receipt.legal': '* NO REFUNDS · THANK YOU · COME AGAIN *',
+   927→                    // timeline
+   928→                    'timeline.kicker': '( 03 ) — CAREER TIMELINE',
+   929→                    'timeline.title1': 'A BRIEF HISTORY OF ',
+   930→                    'timeline.title2': 'my growth',
+   931→                    'timeline.desc': 'Two years of frontend development, from internship to full-time engineer. The learning never stops.',
+   932→                    'timeline.t1': 'Graduation & First Internship',
+   933→                    'timeline.t1d': 'Completed B.E. in Electronics and Communication Engineering. Joined Spangles Infotech as a frontend apprentice, discovered my love for React.',
+   934→                    'timeline.t2': 'Frontend Developer (Apprenticeship)',
+   935→                    'timeline.t2d': 'Built hospital admin panels, learned React performance optimization, and wrote my first test suites with Jest and React Testing Library.',
+   936→                    'timeline.t3': 'Frontend Software Engineer',
+   937→                    'timeline.t3d': 'Joined Tech Technologies Pvt Ltd. Improved checkout performance, integrated Razorpay, and worked with Redux Toolkit & RTK Query.',
+   938→                    'timeline.t4': 'You Are Here',
+   939→                    'timeline.current': 'CURRENT LOCATION',
+   940→                    'timeline.t4d': 'Still building, still learning, still arguing about the best state management library. This website is proof of life.',
+   941→                    // skills
+   942→                    'skills.kicker': '( 04 ) — SKILLS',
+   943→                    'skills.title1': 'WHAT I DO ',
+   944→                    'skills.title2': '(my toolkit)',
+   945→                    'skills.desc': 'Click around. Everything is expandable, including the skill set.',
+   946→                    'skills.s1': 'React Development',
+   947→                    'skills.s1d': 'Building scalable, maintainable interfaces with React 19, Next.js, and modern patterns. Reusable components, hooks, and performance-conscious code.',
+   948→                    'skills.s2': 'UI Engineering & Accessibility',
+   949→                    'skills.s2d': 'Crafting responsive, WCAG-compliant interfaces with Tailwind CSS, Ant Design, and Material UI. Clean HTML5, modern CSS3, and ARIA best practices.',
+   950→                    'skills.s3': 'State Management',
+   951→                    'skills.s3d': 'Managing complex state with Redux Toolkit, RTK Query, Zustand, and TanStack Query. Efficient data fetching, caching, and normalized stores.',
+   952→                    'skills.s4': 'Performance Optimization',
+   953→                    'skills.s4d': 'Improving load times and Core Web Vitals through code splitting, lazy loading, bundle analysis, and caching strategies. Performance is a feature.',
+   954→                    'skills.s5': 'Testing & Quality',
+   955→                    'skills.s5d': 'Writing robust test suites with Jest, React Testing Library, and Vitest to catch bugs early and ensure UI stability.',
+   956→                    // proof
+   957→                    'proof.kicker': '( 05 ) — PROOF',
+   958→                    'proof.title1': 'PEOPLE ',
+   959→                    'proof.title2': 'talk.',
+   960→                    'proof.desc': 'Real quotes from real clients and colleagues. No further questions, your honour.',
+   961→                    'proof.q1': 'Anish said \'it depends\' for forty-five minutes. Then fixed it in five.',
+   962→                    'proof.q1who': '— A REAL CLIENT *',
+   963→                    'proof.q2': 'We asked for a dashboard. We received a dashboard, a lecture on performance, and our best quarter ever.',
+   964→                    'proof.q2who': '— HAPPY, SOMEWHAT',
+   965→                    'proof.q3': 'He refused to use jQuery. He was right.',
+   966→                    'proof.q3who': '— STILL SCARRED',
+   967→                    'proof.q4': 'Our app loads before we finish saying \'our app loads\'.',
+   968→                    'proof.q4who': '— IMPATIENT INC.',
+   969→                    'proof.q5': '10/10. Would argue about CSS specificity again.',
+   970→                    'proof.q5who': '— GRAYSCALE LLC',
+   971→                    'proof.q6': 'He optimized our bundle. Page speed is up 40%. Coincidence? Probably. We don\'t care.',
+   972→                    'proof.q6who': '— FONT ENTHUSIASTS MONTHLY',
+   973→                    'proof.note': '* names withheld for legal reasons (mine)',
+   974→                    // contact
+   975→                    'contact.kicker': '( 06 ) — CONTACT',
+   976→                    'contact.title1': 'SAY ',
+   977→                    'contact.title2': 'hi.',
+   978→                    'contact.desc': 'Good briefs welcome. Dancing babies are not. I reply faster than this website loads — which, admittedly, is a low bar while the kerning slider is involved.',
+   979→                    'contact.note': 'CURRENTLY OPEN TO: FRONTEND ROLES · CURRENTLY AVOIDING: "QUICK FIXES"',
+   980→                    // footer
+   981→                    'footer.copyright': '© 2024–2026 DELIN B ANISH. ALL RIGHTS RESERVED, INCLUDING THE RIGHT TO REMAIN KERNING.',
+   982→                    'footer.dontPress': 'DO NOT PRESS',
+   983→                    // modal
+   984→                    'modal.close': 'CLOSE — RUN AWAY',
+   985→                    'modal.brief': 'THE BRIEF',
+   986→                    'modal.outcome': 'THE OUTCOME',
+   987→                    'modal.quote': 'CLIENT QUOTE',
+   988→                    'modal.lesson': 'LESSON LEARNED',
+   989→                    'modal.ask': 'ASK ME ABOUT IT — SERIOUSLY',
+   990→                },
+   991→                ar: {
+   992→                    // Arabic translations
+   993→                    'loader.line1': 'تسخين المكونات',
+   994→                    'loader.skip': 'انقر لتخطي الدراما',
+   995→                    'nav.work': 'الأعمال',
+   996→                    'nav.receipt': 'الإيصال',
+   997→                    'nav.timeline': 'الجدول الزمني',
+   998→                    'nav.proof': 'الإثبات',
+   999→                    'nav.contact': 'اتصل',
+  1000→                    'nav.hire': 'وظّفني',
+  1001→                    'menu.workTag': 'المشاريع',
+  1002→                    'menu.receiptTag': 'تقرير الأضرار',
+  1003→                    'menu.timelineTag': 'المسار المهني',
+  1004→                    'menu.proofTag': 'قالوا عني',
+  1005→                    'menu.contactTag': 'قل مرحباً',
+  1006→                    'menu.foot': 'تأسس ٢٠٢٤ · ما زلت أضبط التباعد',
+  1007→                    'hero.meta1': 'معرض — مطور واجهات أمامية',
+  1008→                    'hero.meta2': 'تأسس ٢٠٢٤',
+  1009→                    'hero.intro1': 'مطور <em class="font-serif italic font-normal text-[1.1em]">واجهات أمامية</em> بخبرة سنتين في بناء تطبيقات React.js. أتخصص في تقنيات الواجهة الأمامية الأساسية وتطوير React الحديث.',
+  1010→                    'hero.intro2': '( أنيش هو اسمي الحقيقي. كذلك هوسي بضبط التباعد. اسحب الشريط — أنا أصرّ على ذلك. )',
+  1011→                    'hero.kernLabel': 'التباعد: <b class="text-accent">كما أراد الله</b>',
+  1012→                    'hero.kernEnd1': 'منضغط',
+  1013→                    'hero.kernEnd2': 'مسافة اجتماعية',
+  1014→                    'hero.scroll': 'مرر — يصبح أفضل',
+  1015→                    'hero.stats': 'سنتان · ٣+ مشاريع · ٠ ندم* (*صفر)',
+  1016→                    'hero.badge': 'مفتوح لأدوار الواجهة الأمامية · متخصص في React ·',
+  1017→                    'marquee.exp': 'سنتان خبرة',
+  1018→                    'marquee.react': 'React 19',
+  1019→                    'marquee.ts': 'TypeScript',
+  1020→                    'marquee.tailwind': 'Tailwind CSS',
+  1021→                    'marquee.redux': 'Redux Toolkit',
+  1022→                    'marquee.gsap': 'GSAP',
+  1023→                    'marquee.agile': 'Agile',
+  1024→                    'marquee.perf': 'مهووس بالأداء',
+  1025→                    'work.kicker': '( ٠١ ) — مشاريع مختارة',
+  1026→                    'work.title1': 'الـ ',
+  1027→                    'work.title2': 'مشاريع',
+  1028→                    'work.desc': 'ثلاثة مشاريع تعرض مهاراتي في هندسة الواجهات، من منصات التجارة الإلكترونية إلى لوحات الإدارة وبوابات التعليم.',
+  1029→                    'work.proj1.title': 'منصة تجارة إلكترونية',
+  1030→                    'work.proj1.meta': 'واجهة أمامية / تجارة إلكترونية',
+  1031→                    'work.proj2.title': 'لوحة الإدارة ولوحة التحكم',
+  1032→                    'work.proj2.meta': 'لوحة تحكم / واجهة',
+  1033→                    'work.proj3.title': 'بوابة تعليمية',
+  1034→                    'work.proj3.meta': 'بوابة / مدفوعات',
+  1035→                    'receipt.kicker': '( ٠٢ ) — تقرير الأضرار',
+  1036→                    'receipt.title1': 'سنتان، ',
+  1037→                    'receipt.title2': 'بالتفصيل.',
+  1038→                    'receipt.desc': 'كل طلب دمج يحكي قصة. قصتي تصرخ. جميع الأرقام تحقق منها قائد فريقي، الذي ضحك ثم طلب المزيد من الميزات.',
+  1039→                    'receipt.fine': '* لا استرداد · جميع المبيعات نهائية · عد مرة أخرى',
+  1040→                    'receipt.head': 'إيصال مهني',
+  1041→                    'receipt.item1': 'مشاريع سُلّمت',
+  1042→                    'receipt.item2': 'مكونات React بنيت',
+  1043→                    'receipt.item2val': 'مئات',
+  1044→                    'receipt.item3': 'أخطاء أُصلحت',
+  1045→                    'receipt.item3val': 'كثيرة',
+  1046→                    'receipt.item4': 'أخطاء كونسول صدرت',
+  1047→                    'receipt.item5': 'حزم npm مثبتة',
+  1048→                    'receipt.item5val': 'آلاف',
+  1049→                    'receipt.item6': 'شرائح Redux أنشئت',
+  1050→                    'receipt.item7': 'قهوة (لتر)',
+  1051→                    'receipt.item8': 'اجتماعات نجوت منها',
+  1052→                    'receipt.item8val': 'لا تُحصى',
+  1053→                    'receipt.subtotal': 'المجموع الفرعي',
+  1054→                    'receipt.subtotalVal': 'الخبرة',
+  1055→                    'receipt.vat': 'ضريبة القيمة المضافة (صدمة IE11)',
+  1056→                    'receipt.vatVal': 'مشمول',
+  1057→                    'receipt.total': 'الإجمالي',
+  1058→                    'receipt.totalVal': 'سنتان',
+  1059→                    'receipt.stamp': 'خدمة سنتين',
+  1060→                    'receipt.code': 'ANISH-2024-∞ · صالح في هذا البعد',
+  1061→                    'receipt.legal': '* لا استرداد · شكراً · عد مرة أخرى *',
+  1062→                    'timeline.kicker': '( ٠٣ ) — الجدول الزمني المهني',
+  1063→                    'timeline.title1': 'نبذة تاريخية عن ',
+  1064→                    'timeline.title2': 'نموّي',
+  1065→                    'timeline.desc': 'سنتان من تطوير الواجهة الأمامية، من التدريب إلى مهندس بدوام كامل. التعلم لا يتوقف.',
+  1066→                    'timeline.t1': 'التخرج والتدريب الأول',
+  1067→                    'timeline.t1d': 'أكملت بكالوريوس الهندسة في الإلكترونيات والاتصالات. انضممت إلى Spangles Infotech كمتدرب في الواجهة الأمامية واكتشفت حبي لـ React.',
+  1068→                    'timeline.t2': 'مطور واجهات أمامية (تدريب مهني)',
+  1069→                    'timeline.t2d': 'بنيت لوحات إدارة للمستشفيات، تعلمت تحسين أداء React، وكتبت أول مجموعات اختبار باستخدام Jest و React Testing Library.',
+  1070→                    'timeline.t3': 'مهندس برمجيات واجهات أمامية',
+  1071→                    'timeline.t3d': 'انضممت إلى Tech Technologies Pvt Ltd. حسّنت أداء الدفع، ودمجت Razorpay، وعملت مع Redux Toolkit و RTK Query.',
+  1072→                    'timeline.t4': 'أنت هنا',
+  1073→                    'timeline.current': 'الموقع الحالي',
+  1074→                    'timeline.t4d': 'ما زلت أبني، ما زلت أتعلم، ما زلت أجادل حول أفضل مكتبة لإدارة الحالة. هذا الموقع دليل على الحياة.',
+  1075→                    'skills.kicker': '( ٠٤ ) — المهارات',
+  1076→                    'skills.title1': 'ما أفعله ',
+  1077→                    'skills.title2': '(عدّتي)',
+  1078→                    'skills.desc': 'انقر حولك. كل شيء قابل للتوسيع، بما في ذلك مجموعة المهارات.',
+  1079→                    'skills.s1': 'تطوير React',
+  1080→                    'skills.s1d': 'بناء واجهات قابلة للتوسع والصيانة باستخدام React 19 و Next.js والأنماط الحديثة. مكونات قابلة لإعادة الاستخدام، وخطافات، ووعي بالأداء.',
+  1081→                    'skills.s2': 'هندسة الواجهة وإمكانية الوصول',
+  1082→                    'skills.s2d': 'صياغة واجهات متجاوبة ومتوافقة مع WCAG باستخدام Tailwind CSS و Ant Design و Material UI. HTML5 نظيف، CSS3 حديث، وأفضل ممارسات ARIA.',
+  1083→                    'skills.s3': 'إدارة الحالة',
+  1084→                    'skills.s3d': 'إدارة الحالة المعقدة مع Redux Toolkit و RTK Query و Zustand و TanStack Query. جلب بيانات فعال، وتخزين مؤقت، ومخازن طبيعية.',
+  1085→                    'skills.s4': 'تحسين الأداء',
+  1086→                    'skills.s4d': 'تحسين أوقات التحميل و Core Web Vitals عبر تقسيم الكود، والتحميل الكسول، وتحليل الحزم، واستراتيجيات التخزين المؤقت. الأداء ميزة.',
+  1087→                    'skills.s5': 'الاختبار والجودة',
+  1088→                    'skills.s5d': 'كتابة مجموعات اختبار قوية مع Jest و React Testing Library و Vitest لاكتشاف الأخطاء مبكراً وضمان استقرار الواجهة.',
+  1089→                    'proof.kicker': '( ٠٥ ) — الإثبات',
+  1090→                    'proof.title1': 'الناس ',
+  1091→                    'proof.title2': 'يتكلمون.',
+  1092→                    'proof.desc': 'اقتباسات حقيقية من عملاء وزملاء حقيقيين. لا مزيد من الأسئلة، حضرة القاضي.',
+  1093→                    'proof.q1': 'قال أنيش \'يعتمد\' لمدة خمس وأربعين دقيقة. ثم أصلحها في خمس.',
+  1094→                    'proof.q1who': '— عميل حقيقي *',
+  1095→                    'proof.q2': 'طلبنا لوحة تحكم. حصلنا على لوحة تحكم، ومحاضرة عن الأداء، وأفضل ربع لنا على الإطلاق.',
+  1096→                    'proof.q2who': '— سعيد، إلى حد ما',
+  1097→                    'proof.q3': 'رفض استخدام jQuery. كان محقاً.',
+  1098→                    'proof.q3who': '— ما زال يعاني',
+  1099→                    'proof.q4': 'تطبيقنا يُحمَّل قبل أن ننتهي من قول \'تطبيقنا يُحمَّل\'.',
+  1100→                    'proof.q4who': '— شركة نفاد الصبر',
+  1101→                    'proof.q5': '10/10. سأجادل حول خصوصية CSS مرة أخرى.',
+  1102→                    'proof.q5who': '— GRAYSCALE LLC',
+  1103→                    'proof.q6': 'قام بتحسين حزمة ملفاتنا. سرعة الصفحة ارتفعت 40٪. مصادفة؟ ربما. لا يهمنا.',
+  1104→                    'proof.q6who': '— مجلة عشاق الخطوط الشهرية',
+  1105→                    'proof.note': '* الأسماء محذوفة لأسباب قانونية (أسبابي)',
+  1106→                    'contact.kicker': '( ٠٦ ) — اتصال',
+  1107→                    'contact.title1': 'قل ',
+  1108→                    'contact.title2': 'مرحباً.',
+  1109→                    'contact.desc': 'الموجزات الجيدة مرحب بها. الأطفال الراقصون لا. أرد أسرع من تحميل هذا الموقع — وهو معترف به كمعيار منخفض عندما يكون شريط التباعد متورطاً.',
+  1110→                    'contact.note': 'مفتوح حالياً لـ: أدوار الواجهة الأمامية · يتجنب حالياً: "إصلاحات سريعة"',
+  1111→                    'footer.copyright': '© 2024–2026 DELIN B ANISH. جميع الحقوق محفوظة، بما في ذلك الحق في البقاء في حالة ضبط تباعد.',
+  1112→                    'footer.dontPress': 'لا تضغط',
+  1113→                    'modal.close': 'إغلاق — اهرب',
+  1114→                    'modal.brief': 'الموجز',
+  1115→                    'modal.outcome': 'النتيجة',
+  1116→                    'modal.quote': 'اقتباس العميل',
+  1117→                    'modal.lesson': 'الدرس المستفاد',
+  1118→                    'modal.ask': 'اسألني عنه — بجدية',
+  1119→                }
+  1120→            };
+  1121→
+  1122→            let currentLang = 'en';
+  1123→            const langSwitch = $('#langSwitch');
+  1124→            const html = document.documentElement;
+  1125→
+  1126→            function applyTranslations(lang) {
+  1127→                // Update dir attribute for RTL
+  1128→                if (lang === 'ar') {
+  1129→                    html.setAttribute('dir', 'rtl');
+  1130→                    html.setAttribute('lang', 'ar');
+  1131→                } else {
+  1132→                    html.setAttribute('dir', 'ltr');
+  1133→                    html.setAttribute('lang', lang);
+  1134→                }
+  1135→                // Replace text for all elements with data-i18n
+  1136→                $$('[data-i18n]').forEach(el => {
+  1137→                    const key = el.getAttribute('data-i18n');
+  1138→                    if (translations[lang][key] !== undefined) {
+  1139→                        // For elements that contain HTML (like hero.intro1), we set innerHTML
+  1140→                        // For others, we set textContent
+  1141→                        // We'll check if translation string contains '<' to decide innerHTML
+  1142→                        const trans = translations[lang][key];
+  1143→                        if (trans.includes('<')) {
+  1144→                            el.innerHTML = trans;
+  1145→                        } else {
+  1146→                            el.textContent = trans;
+  1147→                        }
+  1148→                    }
+  1149→                });
+  1150→                // Update language switch button text
+  1151→                langSwitch.textContent = lang.toUpperCase();
+  1152→                // Also update document title? optional
+  1153→            }
+  1154→
+  1155→            function cycleLanguage() {
+  1156→                const langs = ['en', 'ar', 'ta'];
+  1157→                const idx = langs.indexOf(currentLang);
+  1158→                currentLang = langs[(idx + 1) % langs.length];
+  1159→                applyTranslations(currentLang);
+  1160→            }
+  1161→
+  1162→            langSwitch.addEventListener('click', cycleLanguage);
+  1163→            // Initialize with English
+  1164→            applyTranslations('en');
+  1165→
+  1166→            /* ============ PARTICLE SPHERE ============ */
+  1167→            const canvas = $('#sphereCanvas');
+  1168→            const ctx = canvas.getContext('2d');
+  1169→            let W = 0,
+  1170→                H = 0,
+  1171→                DPR = Math.min(window.devicePixelRatio || 1, 2);
+  1172→            const glowCanvas = document.createElement('canvas');
+  1173→
+  1174→            function renderGlow() {
+  1175→                glowCanvas.width = Math.max(1, Math.round(W * DPR));
+  1176→                glowCanvas.height = Math.max(1, Math.round(H * DPR));
+  1177→                if (!W || !H) return;
+  1178→                const g = glowCanvas.getContext('2d');
+  1179→                g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  1180→                const R = Math.min(W, H) * 0.335;
+  1181→                const cx = W / 2,
+  1182→                    cy = H / 2;
+  1183→                const layers = [
+  1184→                    [cx - R * 0.05, cy - R * 0.45, R * 0.85, 'rgba(255,210,150,0.30)'],
+  1185→                    [cx + R * 0.25, cy + R * 0.05, R * 0.95, 'rgba(255,130,95,0.20)'],
+  1186→                    [cx + R * 0.05, cy + R * 0.50, R * 0.75, 'rgba(210,75,125,0.16)']
+  1187→                ];
+  1188→                for (const [gx, gy, gr, col] of layers) {
+  1189→                    const grad = g.createRadialGradient(gx, gy, 0, gx, gy, gr);
+  1190→                    grad.addColorStop(0, col);
+  1191→                    grad.addColorStop(1, 'rgba(0,0,0,0)');
+  1192→                    g.fillStyle = grad;
+  1193→                    g.fillRect(0, 0, W, H);
+  1194→                }
+  1195→            }
+  1196→
+  1197→            function resize() {
+  1198→                DPR = Math.min(window.devicePixelRatio || 1, 2);
+  1199→                W = window.innerWidth;
+  1200→                H = window.innerHeight;
+  1201→                canvas.width = Math.max(1, Math.round(W * DPR));
+  1202→                canvas.height = Math.max(1, Math.round(H * DPR));
+  1203→                ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  1204→                renderGlow();
+  1205→            }
+  1206→            window.addEventListener('resize', resize);
+  1207→            resize();
+  1208→
+  1209→            const LAT_STEPS = 108,
+  1210→                LON_STEPS = 136;
+  1211→
+  1212→            function smoothstep(e0, e1, x) {
+  1213→                let t = (x - e0) / (e1 - e0);
+  1214→                t = Math.max(0, Math.min(1, t));
+  1215→                return t * t * (3 - 2 * t);
+  1216→            }
+  1217→
+  1218→            function bandValue(theta, phi, bandAngle, v0, width, uFreq, uPhase, lengthLo, lengthHi) {
+  1219→                const ca = Math.cos(bandAngle),
+  1220→                    sa = Math.sin(bandAngle);
+  1221→                const u = theta * ca + phi * sa;
+  1222→                const v = -theta * sa + phi * ca;
+  1223→                let closeness = Math.max(0, 1 - Math.abs(v - v0) / width);
+  1224→                closeness = Math.pow(closeness, 1.5);
+  1225→                const fold = Math.cos(u * uFreq + uPhase);
+  1226→                const corrug = fold * 0.5 + 0.5;
+  1227→                const lengthMask = smoothstep(lengthLo - 0.4, lengthLo, u) * (1 - smoothstep(lengthHi, lengthHi + 0.4, u));
+  1228→                return closeness * (0.55 + 0.55 * corrug) * lengthMask;
+  1229→            }
+  1230→
+  1231→            function ribbonField(theta, phi) {
+  1232→                const b1 = bandValue(theta, phi, 50 * Math.PI / 180, -0.05, 0.32, 3.6, 0.0, -1.6, 1.05);
+  1233→                const b2 = bandValue(theta, phi, 18 * Math.PI / 180, 0.55, 0.28, 4.5, 1.0, -0.6, 1.4);
+  1234→                return Math.max(b1, b2);
+  1235→            }
+  1236→
+  1237→            const particles = [];
+  1238→            for (let i = 0; i < LAT_STEPS; i++) {
+  1239→                const theta = -Math.PI / 2 + (i / (LAT_STEPS - 1)) * Math.PI;
+  1240→                const y0 = -Math.sin(theta);
+  1241→                const ring = Math.cos(theta);
+  1242→                for (let j = 0; j < LON_STEPS; j++) {
+  1243→                    const phi = (j / LON_STEPS) * Math.PI * 2 - Math.PI;
+  1244→                    const x0 = ring * Math.cos(phi);
+  1245→                    const z0 = ring * Math.sin(phi);
+  1246→                    const ribbon = ribbonField(theta, phi);
+  1247→                    particles.push({ x0, y0, z0, ribbon });
+  1248→                }
+  1249→            }
+  1250→
+  1251→            /* ============ VIRTUAL CORE ============ */
+  1252→            const coreRef = {
+  1253→                current: {
+  1254→                    position: { x: 0, y: 0, z: 0 },
+  1255→                    rotation: { x: 0, y: 0, z: 0 },
+  1256→                    scale: { x: 1, y: 1, z: 1 }
+  1257→                }
+  1258→            };
+  1259→            const scrollProgress = { current: 0 };
+  1260→
+  1261→            /* ============ SPHERE STATE ============ */
+  1262→            const IDLE_SPIN = reduced ? 0 : 0.0016;
+  1263→            const MAX_FLICK_SPIN = 0.05;
+  1264→            let rotX = -0.30,
+  1265→                rotY = 0.62,
+  1266→                velX = 0,
+  1267→                velY = IDLE_SPIN;
+  1268→            let dragging = false,
+  1269→                lastPX = 0,
+  1270→                lastPY = 0,
+  1271→                activePointer = null;
+  1272→            let paused = false,
+  1273→                rafId = 0;
+  1274→
+  1275→            function pointerDown(x, y) { dragging = true;
+  1276→                lastPX = x;
+  1277→                lastPY = y; }
+  1278→
+  1279→            function pointerMove(x, y) {
+  1280→                if (!dragging) return;
+  1281→                const dx = x - lastPX,
+  1282→                    dy = y - lastPY;
+  1283→                velY = Math.max(-MAX_FLICK_SPIN, Math.min(MAX_FLICK_SPIN, -dx * 0.0045));
+  1284→                velX = Math.max(-MAX_FLICK_SPIN, Math.min(MAX_FLICK_SPIN, -dy * 0.0045));
+  1285→                rotY += velY;
+  1286→                rotX += velX;
+  1287→                rotX = Math.max(-1.3, Math.min(1.3, rotX));
+  1288→                lastPX = x;
+  1289→                lastPY = y;
+  1290→            }
+  1291→
+  1292→            function pointerUp() { dragging = false; }
+  1293→
+  1294→            document.addEventListener('pointerdown', e => {
+  1295→                if (e.target.closest('a, button, input, .work-row, .clip, .svc-head, .menu, .modal')) return;
+  1296→                if (activePointer !== null) return;
+  1297→                activePointer = e.pointerId;
+  1298→                pointerDown(e.clientX, e.clientY);
+  1299→            });
+  1300→            document.addEventListener('pointermove', e => {
+  1301→                if (e.pointerId !== activePointer) return;
+  1302→                pointerMove(e.clientX, e.clientY);
+  1303→            });
+  1304→
+  1305→            function releasePointer(e) {
+  1306→                if (e.pointerId !== activePointer) return;
+  1307→                activePointer = null;
+  1308→                pointerUp();
+  1309→            }
+  1310→            document.addEventListener('pointerup', releasePointer);
+  1311→            document.addEventListener('pointercancel', releasePointer);
+  1312→
+  1313→            /* ============ SPHERE COLOR RAMPS ============ */
+  1314→            const CREAM = [255, 246, 220],
+  1315→                GOLD = [255, 206, 132],
+  1316→                ORANGE = [255, 140, 86],
+  1317→                MAGENTA = [200, 58, 132],
+  1318→                DEEPBLUE = [24, 9, 52];
+  1319→
+  1320→            function lerp(a, b, t) { return a + (b - a) * t; }
+  1321→
+  1322→            function mixC(c1, c2, t, out) {
+  1323→                out[0] = lerp(c1[0], c2[0], t);
+  1324→                out[1] = lerp(c1[1], c2[1], t);
+  1325→                out[2] = lerp(c1[2], c2[2], t);
+  1326→                return out;
+  1327→            }
+  1328→            const tmpA = [0, 0, 0],
+  1329→                tmpB = [0, 0, 0],
+  1330→                tmpC = [0, 0, 0],
+  1331→                tmpD = [0, 0, 0];
+  1332→
+  1333→            function baseColor(latT, out) {
+  1334→                if (latT < 0.28) return mixC(CREAM, GOLD, latT / 0.28, out);
+  1335→                else if (latT < 0.55) return mixC(GOLD, ORANGE, (latT - 0.28) / 0.27, out);
+  1336→                else if (latT < 0.80) return mixC(ORANGE, MAGENTA, (latT - 0.55) / 0.25, out);
+  1337→                else return mixC(MAGENTA, DEEPBLUE, (latT - 0.80) / 0.20, out);
+  1338→            }
+  1339→
+  1340→            const PERSPECTIVE = 3.4;
+  1341→            const drawPool = new Array(particles.length);
+  1342→            for (let i = 0; i < drawPool.length; i++) {
+  1343→                drawPool[i] = { px: 0, py: 0, z: 0, r: 0, g: 0, b: 0, a: 0, size: 0 };
+  1344→            }
+  1345→
+  1346→            function frame() {
+  1347→                rafId = 0;
+  1348→                if (paused) return;
+  1349→
+  1350→                if (!dragging) {
+  1351→                    velY += (IDLE_SPIN - velY) * 0.02;
+  1352→                    rotY += velY;
+  1353→                    velX *= 0.94;
+  1354→                    rotX += velX;
+  1355→                    rotX = Math.max(-1.3, Math.min(1.3, rotX));
+  1356→                }
+  1357→
+  1358→                const pos = coreRef.current.position;
+  1359→                const rot = coreRef.current.rotation;
+  1360→                const sca = coreRef.current.scale.x;
+  1361→                const finalRotX = rotX + rot.x;
+  1362→                const finalRotY = rotY + rot.y;
+  1363→                const finalScale = sca;
+  1364→                const R = Math.min(W, H) * 0.335 * finalScale;
+  1365→                const cosX = Math.cos(finalRotX),
+  1366→                    sinX = Math.sin(finalRotX);
+  1367→                const cosY = Math.cos(finalRotY),
+  1368→                    sinY = Math.sin(finalRotY);
+  1369→                const cx = W * 0.5 + pos.x;
+  1370→                const cy = H * 0.5 + pos.y;
+  1371→                const scale = W / 720;
+  1372→
+  1373→                ctx.clearRect(0, 0, W, H);
+  1374→                ctx.drawImage(glowCanvas, 0, 0, W, H);
+  1375→
+  1376→                let count = 0;
+  1377→                for (let i = 0; i < particles.length; i++) {
+  1378→                    const p = particles[i];
+  1379→                    const bulge = 1 + Math.min(p.ribbon, 1.2) * 0.09;
+  1380→                    const xB = p.x0 * bulge,
+  1381→                        yB = p.y0 * bulge,
+  1382→                        zB = p.z0 * bulge;
+  1383→                    const x1 = xB * cosY - zB * sinY;
+  1384→                    const z1 = xB * sinY + zB * cosY;
+  1385→                    const y1 = yB * cosX - z1 * sinX;
+  1386→                    const z2 = yB * sinX + z1 * cosX;
+  1387→                    if (z2 < 0.02) continue;
+  1388→                    const factor = PERSPECTIVE / (PERSPECTIVE - z2);
+  1389→                    const px = cx + x1 * R * factor;
+  1390→                    const py = cy + y1 * R * factor;
+  1391→                    const latT = Math.max(0, Math.min(1, (1 + y1) / 2));
+  1392→                    const base = baseColor(latT, tmpA);
+  1393→                    const strength = Math.max(0, Math.min(1, p.ribbon));
+  1394→                    const s2 = strength * strength * (3 - 2 * strength);
+  1395→                    const dim = mixC(DEEPBLUE, base, 0.5, tmpB);
+  1396→                    const bright = mixC(base, CREAM, 0.55, tmpC);
+  1397→                    const col = mixC(dim, bright, s2, tmpD);
+  1398→                    const topBoost = Math.max(0, 0.32 - latT) * 0.5;
+  1399→                    const dimA = 0.34 + 0.20 * factor + topBoost;
+  1400→                    const brightA = Math.min(1, 0.34 + s2 * 0.85);
+  1401→                    const alpha = lerp(dimA, brightA, s2);
+  1402→                    const dimSize = 0.85 * factor;
+  1403→                    const brightSize = (0.9 + s2 * 1.5) * factor;
+  1404→                    const size = lerp(dimSize, brightSize, s2) * scale;
+  1405→                    const d = drawPool[count++];
+  1406→                    d.px = px;
+  1407→                    d.py = py;
+  1408→                    d.z = z2;
+  1409→                    d.r = col[0] | 0;
+  1410→                    d.g = col[1] | 0;
+  1411→                    d.b = col[2] | 0;
+  1412→                    d.a = alpha;
+  1413→                    d.size = size;
+  1414→                }
+  1415→
+  1416→                const visible = drawPool.slice(0, count);
+  1417→                visible.sort((a, b) => a.z - b.z);
+  1418→                for (let i = 0; i < visible.length; i++) {
+  1419→                    const d = visible[i];
+  1420→                    ctx.fillStyle = `rgba(${d.r},${d.g},${d.b},${d.a})`;
+  1421→                    ctx.fillRect(d.px - d.size, d.py - d.size, d.size * 2, d.size * 2);
+  1422→                }
+  1423→                rafId = requestAnimationFrame(frame);
+  1424→            }
+  1425→
+  1426→            document.addEventListener('visibilitychange', () => {
+  1427→                if (document.hidden) {
+  1428→                    paused = true;
+  1429→                    if (rafId) { cancelAnimationFrame(rafId);
+  1430→                        rafId = 0; }
+  1431→                } else {
+  1432→                    paused = false;
+  1433→                    if (!rafId) rafId = requestAnimationFrame(frame);
+  1434→                }
+  1435→            });
+  1436→            if (!rafId) rafId = requestAnimationFrame(frame);
+  1437→
+  1438→            /* ============ GSAP SCROLL TIMELINE ============ */
+  1439→            gsap.registerPlugin(ScrollTrigger);
+  1440→
+  1441→            function buildScrollTimeline() {
+  1442→                const tl = gsap.timeline({
+  1443→                    scrollTrigger: {
+  1444→                        trigger: document.documentElement,
+  1445→                        start: 0,
+  1446→                        end: () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight),
+  1447→                        scrub: 1.2,
+  1448→                        invalidateOnRefresh: true,
+  1449→                        onUpdate: self => { scrollProgress.current = self.progress; }
+  1450→                    }
+  1451→                });
+  1452→
+  1453→                tl.to(coreRef.current.position, { x: 1.4 * 60, y: -0.2 * 40, z: 0.3, ease: "none", duration: 0.22 }, 0);
+  1454→                tl.to(coreRef.current.position, { x: -0.4 * 60, y: 0.1 * 40, z: 0.4, ease: "none", duration: 0.23 }, 0.22);
+  1455→                tl.to(coreRef.current.position, { x: 1.2 * 60, y: -0.1 * 40, z: 0.2, ease: "none", duration: 0.15 }, 0.45);
+  1456→                tl.to(coreRef.current.position, { x: -1.7 * 60, y: 0.05 * 40, z: 0.6, ease: "none", duration: 0.1 }, 0.6);
+  1457→                tl.to(coreRef.current.position, { x: 0, y: 0.2 * 40, z: -1.2, ease: "none", duration: 0.15 }, 0.85);
+  1458→
+  1459→                tl.to(coreRef.current.rotation, { y: Math.PI * 0.55, x: 0.3, ease: "none", duration: 0.22 }, 0);
+  1460→                tl.to(coreRef.current.rotation, { y: Math.PI * 1.05, x: 0.1, ease: "none", duration: 0.23 }, 0.22);
+  1461→                tl.to(coreRef.current.rotation, { y: Math.PI * 1.3, x: 0, ease: "none", duration: 0.15 }, 0.45);
+  1462→                tl.to(coreRef.current.rotation, { y: Math.PI * 1.6, x: 0.1, ease: "none", duration: 0.15 }, 0.85);
+  1463→
+  1464→                tl.to(coreRef.current.scale, { x: 0.92, y: 0.92, z: 0.92, ease: "none", duration: 0.22 }, 0);
+  1465→                tl.to(coreRef.current.scale, { x: 0.95, y: 0.95, z: 0.95, ease: "none", duration: 0.23 }, 0.22);
+  1466→                tl.to(coreRef.current.scale, { x: 1.05, y: 1.05, z: 1.05, ease: "none", duration: 0.15 }, 0.45);
+  1467→                tl.to(coreRef.current.scale, { x: 0.55, y: 0.55, z: 0.55, ease: "none", duration: 0.15 }, 0.85);
+  1468→
+  1469→                requestAnimationFrame(() => ScrollTrigger.refresh());
+  1470→                return tl;
+  1471→            }
+  1472→
+  1473→            /* ============ LOADER ============ */
+  1474→            const loader = $('#loader'),
+  1475→                lLine = $('#lLine'),
+  1476→                lPct = $('#lPct'),
+  1477→                lBar = $('#lBar');
+  1478→            const LINES = ['warming up the components', 'aligning things to nothing in particular', 'hiding the 2005 hit counter',
+  1479→                'negotiating with the grid', 'ok. it is just a website. go.'
+  1480→            ];
+  1481→            const TH = [0, 26, 54, 80, 97];
+  1482→            let prog = 0,
+  1483→                li = 0,
+  1484→                done = false;
+  1485→
+  1486→            function updLine() { while (li < TH.length - 1 && prog >= TH[li + 1]) li++;
+  1487→                lLine.textContent = LINES[li]; }
+  1488→
+  1489→            function heroIn() { $$('[data-hero]').forEach((el, i) => setTimeout(() => el.classList.add('on'), 380 + i * 95)); }
+  1490→
+  1491→            function finish() {
+  1492→                if (done) return;
+  1493→                done = true;
+  1494→                lPct.textContent = '100%';
+  1495→                lBar.style.transform = 'scaleX(1)';
+  1496→                lLine.textContent = LINES[LINES.length - 1];
+  1497→                setTimeout(() => { loader.classList.add('done');
+  1498→                    heroIn();
+  1499→                    buildScrollTimeline(); }, 300);
+  1500→            }
+  1501→            if (reduced) {
+  1502→                loader.classList.add('done');
+  1503→                $$('[data-hero]').forEach(el => el.classList.add('on'));
+  1504→                buildScrollTimeline();
+  1505→            } else {
+  1506→                updLine();
+  1507→                const iv = setInterval(() => {
+  1508→                    prog = Math.min(100, prog + Math.random() * 7 + 2.5);
+  1509→                    lPct.textContent = Math.floor(prog) + '%';
+  1510→                    lBar.style.transform = 'scaleX(' + (prog / 100) + ')';
+  1511→                    updLine();
+  1512→                    if (prog >= 100) { clearInterval(iv);
+  1513→                        setTimeout(finish, 320); }
+  1514→                }, 70);
+  1515→                loader.addEventListener('click', () => { clearInterval(iv);
+  1516→                    finish(); });
+  1517→            }
+  1518→
+  1519→            /* ============ SCROLL REVEALS ============ */
+  1520→            if ('IntersectionObserver' in window) {
+  1521→                const io = new IntersectionObserver(es => {
+  1522→                    es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on');
+  1523→                            io.unobserve(e.target); } });
+  1524→                }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
+  1525→                $$('.rv:not([data-hero])').forEach(el => io.observe(el));
+  1526→            } else { $$('.rv:not([data-hero])').forEach(el => el.classList.add('on')); }
+  1527→
+  1528→            /* ============ SPLIT HERO LETTERS + BOING ============ */
+  1529→            $$('.h-split').forEach(el => {
+  1530→                [...el.childNodes].forEach(n => {
+  1531→                    if (n.nodeType !== 3) return;
+  1532→                    const frag = document.createDocumentFragment();
+  1533→                    [...n.textContent].forEach(ch => {
+  1534→                        if (ch.trim() === '') { frag.appendChild(document.createTextNode(' ')); return; }
+  1535→                        const s = document.createElement('span');
+  1536→                        s.className = 'h-ch';
+  1537→                        s.textContent = ch;
+  1538→                        frag.appendChild(s);
+  1539→                    });
+  1540→                    el.replaceChild(frag, n);
+  1541→                });
+  1542→            });
+  1543→            $$('.h-ch').forEach(s => {
+  1544→                s.addEventListener('mouseenter', () => { s.classList.remove('boing');
+  1545→                    void s.offsetWidth;
+  1546→                    s.classList.add('boing'); });
+  1547→            });
+  1548→
+  1549→            /* ============ KERNING SLIDER ============ */
+  1550→            const ks = $('#kern'),
+  1551→                nameLast = $('#nameLast'),
+  1552→                kl = $('#kernLabel');
+  1553→
+  1554→            function kern() {
+  1555→                const v = +ks.value;
+  1556→                const k = (-0.06 + (v / 100) * 0.42);
+  1557→                nameLast.style.letterSpacing = k + 'em';
+  1558→                nameLast.classList.toggle('wild', v >= 92 || v <= 2);
+  1559→                const label = v < 4 ? 'VISUAL CRIME' : v < 9 ? 'TIGHT BUT LEGAL' : v < 15 ? 'AS GOD INTENDED' : v < 40 ?
+  1560→                    'BREATHING ROOM' : v < 68 ? 'AIRY. FRENCH, EVEN.' : v < 88 ? 'BOLD CHOICE' :
+  1561→                    "CONGRATS, IT'S A SENTENCE AGAIN";
+  1562→                kl.innerHTML = 'KERNING: <b>' + label + '</b>';
+  1563→            }
+  1564→            ks.addEventListener('input', kern);
+  1565→            kern();
+  1566→
+  1567→            /* ============ LOCAL TIME ============ */
+  1568→            function tick() {
+  1569→                const d = new Date(),
+  1570→                    h = String(d.getHours()).padStart(2, '0'),
+  1571→                    m = String(d.getMinutes()).padStart(2, '0');
+  1572→                $('#localTime').textContent = 'LOCAL TIME: ' + h + ':' + m + ' — COFFEE Nº' + ((d.getHours() % 5) + 1);
+  1573→            }
+  1574→            tick();
+  1575→            setInterval(tick, 30000);
+  1576→
+  1577→            /* ============ MARQUEE ============ */
+  1578→            const track = $('#marqTrack');
+  1579→            track.appendChild(track.firstElementChild.cloneNode(true));
+  1580→
+  1581→            /* ============ CURSOR + PREVIEW ============ */
+  1582→            let mx = innerWidth / 2,
+  1583→                my = innerHeight / 2,
+  1584→                vis = false;
+  1585→            addEventListener('mousemove', e => { mx = e.clientX;
+  1586→                my = e.clientY;
+  1587→                vis = true; });
+  1588→            document.addEventListener('mouseleave', () => { vis = false; });
+  1589→            const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  1590→            const cur = $('#cursor'),
+  1591→                prev = $('#wpreview'),
+  1592→                prevImg = $('#wpreviewImg');
+  1593→            let cx = mx,
+  1594→                cy = my,
+  1595→                cs = 1,
+  1596→                cts = 1,
+  1597→                px = mx,
+  1598→                py = my;
+  1599→            if (fine) {
+  1600→                document.addEventListener('mouseover', e => { cts = e.target.closest('a,button,input,.work-row,.clip,.svc-head') ? 2.3 : 1; });
+  1601→            } else { cur.style.display = 'none'; }
+  1602→            (function loop() {
+  1603→                if (fine) {
+  1604→                    cx += (mx - cx) * .16;
+  1605→                    cy += (my - cy) * .16;
+  1606→                    cs += (cts - cs) * .15;
+  1607→                    cur.style.transform = 'translate(' + cx + 'px,' + cy + 'px) translate(-50%,-50%) scale(' + cs + ')';
+  1608→                    cur.classList.toggle('vis', vis);
+  1609→                    px += (mx - px) * .11;
+  1610→                    py += (my - py) * .11;
+  1611→                    const rot = Math.max(-7, Math.min(7, (mx - px) * .045));
+  1612→                    prev.style.transform = 'translate(' + px + 'px,' + py + 'px) rotate(' + rot + 'deg)';
+  1613→                }
+  1614→                requestAnimationFrame(loop);
+  1615→            })();
+  1616→
+  1617→            /* ============ WORK ROWS ============ */
+  1618→            const PROJECTS = [
+  1619→                { seed: 'ecommerce', title: 'E-COMMERCE PLATFORM', meta: 'FRONTEND / E-COMMERCE — 2025',
+  1620→                    brief: 'Update a legacy e-commerce platform to improve UI scalability and component reuse across catalog, checkout, and order workflows.',
+  1621→                    outcome: 'Built responsive catalog and product pages with Tailwind CSS. Moved state management to RTK Query for caching and normalized state, improving performance.',
+  1622→                    quote: '"It looks modern and loads fast." — the client, immediately asking for more features',
+  1623→                    lesson: 'Component reuse is not just about code; it\'s about not repeating yourself when the client changes their mind.' },
+  1624→                { seed: 'adminpanel', title: 'ADMIN PANEL & DASHBOARD', meta: 'DASHBOARD / UI — 2024–2025',
+  1625→                    brief: 'Build a modular React.js interface for an e-commerce admin dashboard to track orders and visualize analytics.',
+  1626→                    outcome: 'Created UI components for inventory, forms, and tables. Set up RTK Query with cache tags for automatic data refresh.',
+  1627→                    quote: '"He made the dashboard actually usable." — the product manager',
+  1628→                    lesson: 'Forms and tables may not be glamorous, but they are where the business lives.' },
+  1629→                { seed: 'eduportal', title: 'EDUCATIONAL PORTAL', meta: 'PORTAL / PAYMENTS — 2024',
+  1630→                    brief: 'Create a responsive educational portal for searching colleges and courses, with a subscription model and Razorpay integration.',
+  1631→                    outcome: 'Implemented JWT authentication and protected routes. Optimized large lists with lazy loading and pagination.',
+  1632→                    quote: '"Students actually found the colleges they wanted." — the client',
+  1633→                    lesson: 'Performance matters: nobody waits for a slow search, especially a student.' }
+  1634→            ];
+  1635→            const modal = $('#modal');
+  1636→            let lastFocus = null;
+  1637→            const rows = $$('.work-row');
+  1638→            rows.forEach(row => {
+  1639→                const p = PROJECTS[+row.dataset.i];
+  1640→                row.addEventListener('mouseenter', () => {
+  1641→                    if (!fine) return;
+  1642→                    prevImg.src = img(p.seed, 680, 460);
+  1643→                    prevImg.alt = p.title + ' preview';
+  1644→                    prev.classList.add('show');
+  1645→                });
+  1646→                row.addEventListener('mouseleave', () => prev.classList.remove('show'));
+  1647→                const open = () => openModal(+row.dataset.i);
+  1648→                row.addEventListener('click', open);
+  1649→                row.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault();
+  1650→                        open(); } });
+  1651→            });
+  1652→
+  1653→            function openModal(i) {
+  1654→                const p = PROJECTS[i];
+  1655→                $('#mImg').src = img(p.seed, 1400, 1000);
+  1656→                $('#mImg').alt = p.title + ' — project visual';
+  1657→                $('#mMeta').textContent = p.meta;
+  1658→                $('#mTitle').textContent = p.title;
+  1659→                $('#mBrief').textContent = p.brief;
+  1660→                $('#mOutcome').textContent = p.outcome;
+  1661→                $('#mQuote').textContent = p.quote;
+  1662→                $('#mLesson').textContent = p.lesson;
+  1663→                $('#mAsk').href = 'mailto:delinbanish@gmail.com?subject=' + encodeURIComponent('Tell me about ' + p.title);
+  1664→                lastFocus = document.activeElement;
+  1665→                modal.classList.add('open');
+  1666→                modal.setAttribute('aria-hidden', 'false');
+  1667→                document.body.classList.add('lock');
+  1668→                prev.classList.remove('show');
+  1669→                $('#mClose').focus();
+  1670→            }
+  1671→
+  1672→            function closeModal() {
+  1673→                modal.classList.remove('open');
+  1674→                modal.setAttribute('aria-hidden', 'true');
+  1675→                document.body.classList.remove('lock');
+  1676→                if (lastFocus) lastFocus.focus();
+  1677→            }
+  1678→            $$('[data-close]').forEach(el => el.addEventListener('click', closeModal));
+  1679→            document.addEventListener('keydown', e => {
+  1680→                if (e.key !== 'Escape') return;
+  1681→                if (modal.classList.contains('open')) closeModal();
+  1682→                if (document.body.classList.contains('menu-open')) {
+  1683→                    document.body.classList.remove('menu-open');
+  1684→                    $('#menu').setAttribute('aria-hidden', 'true');
+  1685→                }
+  1686→            });
+  1687→
+  1688→            // Focus trap for modal
+  1689→            document.addEventListener('keydown', function(e) {
+  1690→                if (modal.classList.contains('open') && e.key === 'Tab') {
+  1691→                    const focusable = modal.querySelectorAll('button, a, input, [tabindex]:not([tabindex="-1"])');
+  1692→                    if (!focusable.length) return;
+  1693→                    const first = focusable[0];
+  1694→                    const last = focusable[focusable.length - 1];
+  1695→                    if (e.shiftKey && document.activeElement === first) {
+  1696→                        e.preventDefault();
+  1697→                        last.focus();
+  1698→                    } else if (!e.shiftKey && document.activeElement === last) {
+  1699→                        e.preventDefault();
+  1700→                        first.focus();
+  1701→                    }
+  1702→                }
+  1703→            });
+  1704→
+  1705→            /* ============ SERVICES ACCORDION ============ */
+  1706→            $$('.svc').forEach(s => {
+  1707→                const b = s.querySelector('.svc-head');
+  1708→                b.addEventListener('click', () => {
+  1709→                    const wasOpen = s.classList.contains('open');
+  1710→                    $$('.svc.open').forEach(o => { o.classList.remove('open');
+  1711→                        o.querySelector('.svc-head').setAttribute('aria-expanded', 'false'); });
+  1712→                    if (!wasOpen) { s.classList.add('open');
+  1713→                        b.setAttribute('aria-expanded', 'true'); }
+  1714→                });
+  1715→            });
+  1716→
+  1717→            /* ============ NAV + BURGER ============ */
+  1718→            addEventListener('scroll', () => { document.body.classList.toggle('scrolled', scrollY > 40); }, { passive: true });
+  1719→            $('#burger').addEventListener('click', () => {
+  1720→                const open = document.body.classList.toggle('menu-open');
+  1721→                $('#menu').setAttribute('aria-hidden', String(!open));
+  1722→            });
+  1723→            $$('#menu a').forEach(a => a.addEventListener('click', () => {
+  1724→                document.body.classList.remove('menu-open');
+  1725→                $('#menu').setAttribute('aria-hidden', 'true');
+  1726→            }));
+  1727→
+  1728→            /* ============ COPY EMAIL ============ */
+  1729→            let copies = 0;
+  1730→            $('#emailBtn').addEventListener('click', async () => {
+  1731→                const em = 'delinbanish@gmail.com';
+  1732→                try { await navigator.clipboard.writeText(em); } catch (e) {
+  1733→                    const ta = document.createElement('textarea');
+  1734→                    ta.value = em;
+  1735→                    ta.style.position = 'fixed';
+  1736→                    ta.style.opacity = '0';
+  1737→                    document.body.appendChild(ta);
+  1738→                    ta.select();
+  1739→                    document.execCommand('copy');
+  1740→                    ta.remove();
+  1741→                }
+  1742→                copies++;
+  1743→                toast(['COPIED. I REPLY FASTER THAN THIS SITE LOADS.', 'STILL ON YOUR CLIPBOARD. NO PRESSURE.',
+  1744→                    'THREE TIMES? FLATTERED. NOW ACTUALLY EMAIL ME.'
+  1745→                ][Math.min(copies - 1, 2)]);
+  1746→            });
+  1747→
+  1748→            /* ============ TOAST ============ */
+  1749→            let toastT;
+  1750→            const toastEl = $('#toast');
+  1751→
+  1752→            function toast(msg) {
+  1753→                toastEl.textContent = msg;
+  1754→                toastEl.classList.add('show');
+  1755→                clearTimeout(toastT);
+  1756→                toastT = setTimeout(() => toastEl.classList.remove('show'), 2600);
+  1757→            }
+  1758→
+  1759→            /* ============ EASTER EGGS ============ */
+  1760→            $('#dontPress').addEventListener('click', () => {
+  1761→                const on = document.body.classList.toggle('comicsans');
+  1762→                toast(on ? '…you actually pressed it. this is on you now.' : 'balance restored. we never speak of this again.');
+  1763→            });
+  1764→            const baseTitle = document.title;
+  1765→            document.addEventListener('visibilitychange', () => {
+  1766→                document.title = document.hidden ? 'WAIT — COME BACK, I HAVE JOKES' : baseTitle;
+  1767→            });
+  1768→
+  1769→            /* ============ PRELOAD ============ */
+  1770→            addEventListener('load', () => PROJECTS.forEach(p => { const i = new Image();
+  1771→                i.src = img(p.seed, 680, 460); }));
+  1772→
+  1773→        })();
+  1774→    </script>
+  1775→</body>
+  1776→</html>

@@ -1,0 +1,585 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Tailwind v4 theme — ported from the original tailwind.config
+   (CDN config) + :root custom properties from the <style> block.
+   ============================================================ */
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper2: var(--paper2);
+  --color-ink: var(--ink);
+  --color-dark: var(--dark);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-tape: var(--tape);
+
+  /* next/font variables (see src/app/layout.tsx) */
+  --font-bricolage: var(--font-bricolage), sans-serif;
+  --font-serif: var(--font-instrument), serif;
+  --font-mono: var(--font-space-mono), monospace;
+  --font-sans: var(--font-bricolage), sans-serif;
+
+  /* transitionTimingFunction.custom from original config */
+  --ease-custom: cubic-bezier(0.22, 0.9, 0.3, 1);
+
+  /* Animations from original config (names preserved verbatim
+     so the original utility classes keep working) */
+  --animate-spin: spin 3s linear infinite;
+  --animate-spinSlow: spin 9s linear infinite;
+  --animate-spinVerySlow: spin 16s linear infinite;
+  --animate-boing: boing 0.5s cubic-bezier(0.22, 0.9, 0.3, 1);
+  --animate-dip: dip 1.6s ease-in-out infinite;
+  --animate-marquee: marq 26s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes boing {
+  0% {
+    transform: scale(1, 1);
+  }
+  30% {
+    transform: scale(1.18, 0.78);
+  }
+  60% {
+    transform: scale(0.92, 1.12);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+@keyframes dip {
+  50% {
+    transform: translateY(5px);
+  }
+}
+@keyframes marq {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+:root {
+  --paper: #f1ecdf;
+  --paper2: #e8e1ce;
+  --ink: #2b221d;
+  --dark: #4a3b32;
+  /* #0F7A6E darkened ~4% to #0E6E63: passes WCAG AA (>=4.5:1)
+     for small text on paper/paper2/accent surfaces. Visually
+     indistinguishable from the original teal. */
+  --accent: #0e6e63;
+  /* Light teal tint used for accent-colored text on the dark
+     section (#4A3B32) — the original accent measured 2.0:1 there. */
+  --accent-2: #52c4b7;
+  --tape: #e4b33f;
+  --ease: cubic-bezier(0.22, 0.9, 0.3, 1);
+}
+
+/* ============================================================
+   MINIMAL CUSTOM CSS — only what Tailwind can't do
+   (ported 1:1 from the original site)
+   ============================================================ */
+
+/* Anchor navigation offset — the fixed header covers the top of the
+   viewport, so in-page anchors must land below it. The value tracks
+   the REAL header height via --nav-h (kept in sync by SiteHeader:
+   compact-state measurement, resize + font-load safe), so the target
+   section starts flush under the nav with no strip of the previous
+   section peeking through. The original hardcoded 90px was taller
+   than the rendered nav (~60px), which left the bottom of the
+   previous section visible on every anchor jump — most visible at
+   the cream→green seam when navigating to #contact. 90px remains as
+   the no-JS fallback (the original's value). */
+html {
+  scroll-padding-top: var(--nav-h, 90px);
+}
+
+/* Reveal animations */
+.js .rv {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s var(--ease),
+    transform 0.8s var(--ease);
+  transition-delay: var(--d, 0s);
+}
+.js .rv.on {
+  opacity: 1;
+  transform: none;
+}
+
+/* Custom cursor */
+#cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  z-index: 400;
+  opacity: 0;
+  transition: opacity 0.3s;
+  will-change: transform;
+}
+#cursor.vis {
+  opacity: 1;
+}
+@media (hover: none) {
+  #cursor {
+    display: none;
+  }
+}
+
+/* Grain texture */
+.grain {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.055;
+  pointer-events: none;
+  z-index: 120;
+  mix-blend-mode: multiply;
+}
+.frame {
+  position: fixed;
+  inset: 12px;
+  border: 2px solid var(--paper);
+  mix-blend-mode: difference;
+  pointer-events: none;
+  z-index: 115;
+}
+@media (max-width: 640px) {
+  .frame {
+    display: none;
+  }
+}
+
+/* Loader */
+.loader {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--paper);
+  z-index: 300;
+  transition: transform 0.75s cubic-bezier(0.76, 0, 0.24, 1);
+  cursor: pointer;
+}
+.js .loader {
+  display: block;
+}
+.loader.done {
+  transform: translateY(-101%);
+  pointer-events: none;
+}
+.loader.done .loader-inner {
+  opacity: 0;
+}
+.loader-bar i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* Menu */
+.menu {
+  position: fixed;
+  inset: 0;
+  background: var(--dark);
+  z-index: 95;
+  color: var(--paper);
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 6vw;
+}
+body.menu-open .menu {
+  clip-path: inset(0 0 0% 0);
+}
+
+/* Hero letter splitting — hover "boing" is pure CSS
+   (the original re-triggered a JS animation; :hover restarts
+   the animation natively with zero JavaScript) */
+.h-ch {
+  display: inline-block;
+  will-change: transform;
+}
+.h-ch:hover {
+  animation: boing 0.5s var(--ease);
+  color: var(--accent);
+}
+
+/* Kerning ticks */
+.kern-ticks {
+  position: absolute;
+  inset: auto 0 4px 0;
+  height: 8px;
+  background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 10%);
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 34px;
+  background: transparent;
+  cursor: ew-resize;
+  position: relative;
+  z-index: 2;
+  margin: 0;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 2.5px;
+  background: var(--ink);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2.5px solid var(--ink);
+  box-shadow: 2.5px 2.5px 0 var(--ink);
+  margin-top: -10px;
+}
+input[type="range"]::-moz-range-track {
+  height: 2.5px;
+  background: var(--ink);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2.5px solid var(--ink);
+  box-shadow: 2.5px 2.5px 0 var(--ink);
+}
+
+/* Receipt perforation */
+.receipt::after {
+  content: "";
+  display: block;
+  height: 9px;
+  margin: 1rem -1.7rem -1.4rem;
+  background: conic-gradient(from -45deg at 50% 100%, var(--paper) 90deg, transparent 0) 0 0/16px 9px repeat-x;
+}
+
+/* Testimonial tape */
+.clip::before {
+  content: "";
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  width: 96px;
+  height: 26px;
+  transform: translateX(-50%) rotate(-3deg);
+  background: var(--tape);
+  opacity: 0.92;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.14);
+}
+
+/* Work preview card */
+#wpreview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 90;
+  pointer-events: none;
+  will-change: transform;
+}
+.wpreview-card {
+  width: 340px;
+  aspect-ratio: 3/2;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  box-shadow: 10px 10px 0 rgba(74, 59, 50, 0.9);
+  overflow: hidden;
+  transform: translate(-50%, -118%) rotate(-4deg) scale(0.75);
+  opacity: 0;
+  transition:
+    opacity 0.25s,
+    transform 0.3s var(--ease);
+}
+#wpreview.show .wpreview-card {
+  opacity: 1;
+  transform: translate(-50%, -118%) rotate(-4deg) scale(1);
+}
+@media (hover: none) {
+  #wpreview {
+    display: none;
+  }
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 180;
+  visibility: hidden;
+}
+.modal.open {
+  visibility: visible;
+}
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(74, 59, 50, 0.6);
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+.modal.open .modal-backdrop {
+  opacity: 1;
+}
+.modal-panel {
+  position: absolute;
+  inset: 2.5vh 3vw;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  overflow-y: auto;
+  opacity: 0;
+  transform: translateY(34px);
+  transition:
+    opacity 0.4s,
+    transform 0.45s var(--ease);
+  box-shadow: 14px 14px 0 rgba(74, 59, 50, 0.3);
+}
+.modal.open .modal-panel {
+  opacity: 1;
+  transform: none;
+}
+.modal-close {
+  position: sticky;
+  top: 14px;
+  margin-left: auto;
+  margin-right: 14px;
+  z-index: 5;
+  display: block;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  padding: 0.6em 1.1em;
+  width: max-content;
+}
+
+/* Toast */
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: 30px;
+  z-index: 220;
+  transform: translate(-50%, 24px);
+  background: var(--dark);
+  color: var(--paper);
+  border-left: 5px solid var(--accent);
+  padding: 1em 1.5em;
+  opacity: 0;
+  pointer-events: none;
+  max-width: 88vw;
+  transition:
+    opacity 0.3s,
+    transform 0.4s var(--ease);
+}
+#toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* Comic Sans easter egg */
+body.comicsans,
+body.comicsans * {
+  font-family: "Comic Sans MS", "Comic Sans", "Chalkboard SE", cursive !important;
+}
+
+/* Body lock */
+body.lock,
+body.menu-open {
+  overflow: hidden;
+}
+
+/* Barcode */
+.barcode {
+  height: 44px;
+  margin-top: 0.9rem;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--ink) 0 2px,
+    transparent 2px 4px,
+    var(--ink) 4px 5px,
+    transparent 5px 9px,
+    var(--ink) 9px 12px,
+    transparent 12px 13px,
+    var(--ink) 13px 14px,
+    transparent 14px 18px
+  );
+}
+
+/* Work thumbnails (mobile only) */
+.w-thumb {
+  display: none;
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  margin-top: 1.2rem;
+  border: 1.5px solid currentColor;
+}
+@media (max-width: 860px) {
+  .w-thumb {
+    display: block;
+  }
+  #wpreview {
+    display: none;
+  }
+}
+
+/* Burger */
+.burger {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px;
+  z-index: 110;
+}
+.burger span {
+  display: block;
+  width: 26px;
+  height: 2.5px;
+  background: var(--ink);
+  transition:
+    transform 0.35s var(--ease),
+    background 0.3s;
+}
+body.menu-open .burger span:first-child {
+  transform: translateY(4.25px) rotate(45deg);
+}
+body.menu-open .burger span:last-child {
+  transform: translateY(-4.25px) rotate(-45deg);
+}
+body.menu-open .burger span {
+  background: var(--paper);
+}
+@media (max-width: 860px) {
+  .burger {
+    display: flex;
+  }
+}
+
+/* Service accordion open state */
+.svc.open .svc-body {
+  grid-template-rows: 1fr;
+}
+.svc.open .svc-plus {
+  transform: rotate(45deg);
+  color: var(--accent);
+}
+
+/* Nav scrolled state */
+body.scrolled .nav {
+  background: var(--paper);
+  border-color: var(--ink);
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+/* Fix menu open logo background */
+body.menu-open .nav .logo {
+  color: var(--paper);
+}
+body.menu-open .nav .logo svg {
+  color: var(--accent-2);
+}
+
+/* Language switcher button */
+.lang-switch {
+  font-family: var(--font-space-mono), monospace;
+  font-weight: bold;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  padding: 0.4em 1.1em;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+  text-transform: uppercase;
+}
+.lang-switch:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+
+/* RTL adjustments */
+html[dir="rtl"] body {
+  text-align: right;
+}
+html[dir="rtl"] .nav-links {
+  flex-direction: row-reverse;
+}
+html[dir="rtl"] .hero-meta,
+html[dir="rtl"] .hero-foot {
+  justify-content: flex-end;
+}
+html[dir="rtl"] .work-row,
+html[dir="rtl"] .tl-row,
+html[dir="rtl"] .svc-head {
+  grid-template-columns: auto 1fr auto;
+}
+html[dir="rtl"] .w-arrow {
+  transform: scaleX(-1);
+}
+
+/* ============================================================
+   Accessibility additions (invisible in the original design)
+   ============================================================ */
+
+/* Keyboard-only focus ring — adapts to section colors */
+:focus-visible {
+  outline: 2.5px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* Skip to content link */
+.skip-link {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 500;
+  font-family: var(--font-space-mono), monospace;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.8em 1.4em;
+  transform: translateY(-200%);
+  transition: transform 0.25s var(--ease);
+}
+.skip-link:focus-visible {
+  transform: none;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}

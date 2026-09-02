@@ -1,0 +1,232 @@
+   695→                    <hr class="r-sep border-2 border-dashed border-ink my-[.9rem]">
+   696→                    <div class="r-total font-bricolage font-extrabold text-[1rem] uppercase flex justify-between tracking-[.02em]"><span data-i18n="receipt.subtotal">SUBTOTAL</span><span data-i18n="receipt.subtotalVal">EXPERIENCE</span></div>
+   697→                    <div class="r-total font-bricolage font-extrabold text-[1rem] uppercase flex justify-between tracking-[.02em]"><span data-i18n="receipt.vat">VAT (TRAUMA, IE11)</span><span data-i18n="receipt.vatVal">INCLUDED</span></div>
+   698→                    <hr class="r-sep border-2 border-dashed border-ink my-[.9rem]">
+   699→                    <div class="r-total font-bricolage font-extrabold text-[1rem] uppercase flex justify-between tracking-[.02em]"><span data-i18n="receipt.total">TOTAL</span><span class="text-accent" data-i18n="receipt.totalVal">2 YEARS</span></div>
+   700→                    <div class="stamp absolute top-[46%] -right-[14px] -rotate-[13deg] border-[3.5px] border-accent text-accent font-bricolage font-extrabold text-[1.05rem] tracking-[.06em] uppercase px-[.7em] py-[.35em] opacity-92 bg-paper/60" data-i18n="receipt.stamp">2 yrs service</div>
+   701→                    <div class="barcode" aria-hidden="true"></div>
+   702→                    <div class="r-code text-center text-[10px] tracking-[.3em] mt-[.35rem]" data-i18n="receipt.code">ANISH-2024-∞ · VALID IN THIS DIMENSION</div>
+   703→                    <div class="r-legal text-center text-[10px] tracking-[.12em] mt-[.7rem] uppercase opacity-75" data-i18n="receipt.legal">* NO REFUNDS · THANK YOU · COME AGAIN *</div>
+   704→                </div>
+   705→            </div>
+   706→        </section>
+   707→
+   708→        <!-- ============ TIMELINE ============ -->
+   709→        <section id="timeline" class="py-[7.5rem] px-[4vw]">
+   710→            <div class="shead mb-[3.5rem] max-w-[1100px]">
+   711→                <span class="kicker inline-block font-mono font-bold text-[11px] leading-none tracking-[.16em] border-[1.5px] border-current rounded-full px-[1em] py-[.6em] mb-[1.7rem] uppercase rv" data-i18n="timeline.kicker">( 03 ) — CAREER TIMELINE</span>
+   712→                <h2 class="font-bricolage font-extrabold uppercase text-[clamp(2.7rem,7.5vw,7rem)] leading-[.95] -tracking-[.03em] rv" style="--d:.08s"><span data-i18n="timeline.title1">A BRIEF HISTORY OF </span><em class="font-serif italic font-normal text-[.95em] normal-case tracking-normal text-accent" data-i18n="timeline.title2">my growth</em></h2>
+   713→                <p class="aside font-serif italic font-normal text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.45] opacity-85 max-w-[52ch] mt-[1.2rem] rv" style="--d:.16s" data-i18n="timeline.desc">Two years of frontend development, from internship to full-time engineer. The learning never stops.</p>
+   714→            </div>
+   715→            <ol class="tl border-b-[1.5px] border-ink">
+   716→                <li class="tl-row grid grid-cols-1 md:grid-cols-[minmax(96px,150px)_1fr] gap-2 md:gap-8 border-t-[1.5px] border-ink px-[.6rem] py-[2rem] transition-transform duration-300 ease-custom hover:translate-x-2.5 rv"><span class="tl-year font-mono font-bold text-[1.05rem] text-accent">2024</span><div><h3 class="tl-title font-bricolage font-extrabold text-[1.4rem] uppercase -tracking-[.01em] flex items-center gap-[.8rem] flex-wrap" data-i18n="timeline.t1">Graduation & First Internship</h3><p class="tl-text max-w-[62ch] mt-[.45rem] text-[1.02rem] opacity-88" data-i18n="timeline.t1d">Completed B.E. in Electronics and Communication Engineering. Joined Spangles Infotech as a frontend apprentice, discovered my love for React.</p></div></li>
+   717→                <li class="tl-row grid grid-cols-1 md:grid-cols-[minmax(96px,150px)_1fr] gap-2 md:gap-8 border-t-[1.5px] border-ink px-[.6rem] py-[2rem] transition-transform duration-300 ease-custom hover:translate-x-2.5 rv" style="--d:.05s"><span class="tl-year font-mono font-bold text-[1.05rem] text-accent">2024–2025</span><div><h3 class="tl-title font-bricolage font-extrabold text-[1.4rem] uppercase -tracking-[.01em] flex items-center gap-[.8rem] flex-wrap" data-i18n="timeline.t2">Frontend Developer (Apprenticeship)</h3><p class="tl-text max-w-[62ch] mt-[.45rem] text-[1.02rem] opacity-88" data-i18n="timeline.t2d">Built hospital admin panels, learned React performance optimization, and wrote my first test suites with Jest and React Testing Library.</p></div></li>
+   718→                <li class="tl-row grid grid-cols-1 md:grid-cols-[minmax(96px,150px)_1fr] gap-2 md:gap-8 border-t-[1.5px] border-ink px-[.6rem] py-[2rem] transition-transform duration-300 ease-custom hover:translate-x-2.5 rv" style="--d:.05s"><span class="tl-year font-mono font-bold text-[1.05rem] text-accent">2025</span><div><h3 class="tl-title font-bricolage font-extrabold text-[1.4rem] uppercase -tracking-[.01em] flex items-center gap-[.8rem] flex-wrap" data-i18n="timeline.t3">Frontend Software Engineer</h3><p class="tl-text max-w-[62ch] mt-[.45rem] text-[1.02rem] opacity-88" data-i18n="timeline.t3d">Joined Tech Technologies Pvt Ltd. Improved checkout performance, integrated Razorpay, and worked with Redux Toolkit & RTK Query.</p></div></li>
+   719→                <li class="tl-row grid grid-cols-1 md:grid-cols-[minmax(96px,150px)_1fr] gap-2 md:gap-8 border-t-[1.5px] border-ink px-[.6rem] py-[2rem] transition-transform duration-300 ease-custom hover:translate-x-2.5 rv" style="--d:.05s"><span class="tl-year font-mono font-bold text-[1.05rem] text-accent">2026</span><div><h3 class="tl-title font-bricolage font-extrabold text-[1.4rem] uppercase -tracking-[.01em] flex items-center gap-[.8rem] flex-wrap"><span data-i18n="timeline.t4">You Are Here</span> <span class="here-tag font-mono font-bold text-[9px] tracking-[.16em] border-[1.5px] border-accent text-accent rounded-full px-[.8em] py-[.35em]" data-i18n="timeline.current">CURRENT LOCATION</span></h3><p class="tl-text max-w-[62ch] mt-[.45rem] text-[1.02rem] opacity-88" data-i18n="timeline.t4d">Still building, still learning, still arguing about the best state management library. This website is proof of life.</p></div></li>
+   720→            </ol>
+   721→        </section>
+   722→
+   723→        <!-- ============ SERVICES / SKILLS ============ -->
+   724→        <section id="services" class="py-[7.5rem] px-[4vw]">
+   725→            <div class="shead mb-[3.5rem] max-w-[1100px]">
+   726→                <span class="kicker inline-block font-mono font-bold text-[11px] leading-none tracking-[.16em] border-[1.5px] border-current rounded-full px-[1em] py-[.6em] mb-[1.7rem] uppercase rv" data-i18n="skills.kicker">( 04 ) — SKILLS</span>
+   727→                <h2 class="font-bricolage font-extrabold uppercase text-[clamp(2.7rem,7.5vw,7rem)] leading-[.95] -tracking-[.03em] rv" style="--d:.08s"><span data-i18n="skills.title1">WHAT I DO </span><em class="font-serif italic font-normal text-[.95em] normal-case tracking-normal text-accent" data-i18n="skills.title2">(my toolkit)</em></h2>
+   728→                <p class="aside font-serif italic font-normal text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.45] opacity-85 max-w-[52ch] mt-[1.2rem] rv" style="--d:.16s" data-i18n="skills.desc">Click around. Everything is expandable, including the skill set.</p>
+   729→            </div>
+   730→            <div class="svc group border-t-2 border-ink rv">
+   731→                <button class="svc-head w-full grid grid-cols-[2.2rem_1fr_auto] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-center px-4 py-[1.7rem] text-left" aria-expanded="false"><span class="svc-idx font-mono font-bold text-xs text-accent">01</span><span class="svc-name font-bricolage font-extrabold text-[clamp(1.5rem,4vw,3.1rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3" data-i18n="skills.s1">React Development</span>
+   732→                    <svg class="svc-plus w-[30px] h-[30px] transition-transform duration-400 ease-custom flex-none" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+   733→                <div class="svc-body grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-custom"><div class="overflow-hidden"><div class="svc-inner px-4 md:px-[calc(3.6rem+1.6rem+1rem)] pb-[2rem] max-w-[70ch]">
+   734→                            <p class="text-[1.05rem] opacity-90" data-i18n="skills.s1d">Building scalable, maintainable interfaces with React 19, Next.js, and modern patterns. Reusable components, hooks, and performance-conscious code.</p>
+   735→                            <div class="inc flex flex-wrap gap-[.5rem] mt-4"><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">React 19</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Next.js</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Hooks</span></div>
+   736→                        </div></div></div>
+   737→            </div>
+   738→            <div class="svc group border-t-2 border-ink rv" style="--d:.05s">
+   739→                <button class="svc-head w-full grid grid-cols-[2.2rem_1fr_auto] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-center px-4 py-[1.7rem] text-left" aria-expanded="false"><span class="svc-idx font-mono font-bold text-xs text-accent">02</span><span class="svc-name font-bricolage font-extrabold text-[clamp(1.5rem,4vw,3.1rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3" data-i18n="skills.s2">UI Engineering & Accessibility</span>
+   740→                    <svg class="svc-plus w-[30px] h-[30px] transition-transform duration-400 ease-custom flex-none" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+   741→                <div class="svc-body grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-custom"><div class="overflow-hidden"><div class="svc-inner px-4 md:px-[calc(3.6rem+1.6rem+1rem)] pb-[2rem] max-w-[70ch]">
+   742→                            <p class="text-[1.05rem] opacity-90" data-i18n="skills.s2d">Crafting responsive, WCAG-compliant interfaces with Tailwind CSS, Ant Design, and Material UI. Clean HTML5, modern CSS3, and ARIA best practices.</p>
+   743→                            <div class="inc flex flex-wrap gap-[.5rem] mt-4"><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Tailwind</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Ant Design</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">WCAG</span></div>
+   744→                        </div></div></div>
+   745→            </div>
+   746→            <div class="svc group border-t-2 border-ink rv" style="--d:.1s">
+   747→                <button class="svc-head w-full grid grid-cols-[2.2rem_1fr_auto] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-center px-4 py-[1.7rem] text-left" aria-expanded="false"><span class="svc-idx font-mono font-bold text-xs text-accent">03</span><span class="svc-name font-bricolage font-extrabold text-[clamp(1.5rem,4vw,3.1rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3" data-i18n="skills.s3">State Management</span>
+   748→                    <svg class="svc-plus w-[30px] h-[30px] transition-transform duration-400 ease-custom flex-none" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+   749→                <div class="svc-body grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-custom"><div class="overflow-hidden"><div class="svc-inner px-4 md:px-[calc(3.6rem+1.6rem+1rem)] pb-[2rem] max-w-[70ch]">
+   750→                            <p class="text-[1.05rem] opacity-90" data-i18n="skills.s3d">Managing complex state with Redux Toolkit, RTK Query, Zustand, and TanStack Query. Efficient data fetching, caching, and normalized stores.</p>
+   751→                            <div class="inc flex flex-wrap gap-[.5rem] mt-4"><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Redux Toolkit</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">RTK Query</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Zustand</span></div>
+   752→                        </div></div></div>
+   753→            </div>
+   754→            <div class="svc group border-t-2 border-ink rv" style="--d:.15s">
+   755→                <button class="svc-head w-full grid grid-cols-[2.2rem_1fr_auto] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-center px-4 py-[1.7rem] text-left" aria-expanded="false"><span class="svc-idx font-mono font-bold text-xs text-accent">04</span><span class="svc-name font-bricolage font-extrabold text-[clamp(1.5rem,4vw,3.1rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3" data-i18n="skills.s4">Performance Optimization</span>
+   756→                    <svg class="svc-plus w-[30px] h-[30px] transition-transform duration-400 ease-custom flex-none" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+   757→                <div class="svc-body grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-custom"><div class="overflow-hidden"><div class="svc-inner px-4 md:px-[calc(3.6rem+1.6rem+1rem)] pb-[2rem] max-w-[70ch]">
+   758→                            <p class="text-[1.05rem] opacity-90" data-i18n="skills.s4d">Improving load times and Core Web Vitals through code splitting, lazy loading, bundle analysis, and caching strategies. Performance is a feature.</p>
+   759→                            <div class="inc flex flex-wrap gap-[.5rem] mt-4"><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">React.lazy</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Lighthouse</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Bundle analysis</span></div>
+   760→                        </div></div></div>
+   761→            </div>
+   762→            <div class="svc group border-t-2 border-b-2 border-ink rv" style="--d:.2s">
+   763→                <button class="svc-head w-full grid grid-cols-[2.2rem_1fr_auto] md:grid-cols-[3.6rem_1fr_auto] gap-4 md:gap-6 items-center px-4 py-[1.7rem] text-left" aria-expanded="false"><span class="svc-idx font-mono font-bold text-xs text-accent">05</span><span class="svc-name font-bricolage font-extrabold text-[clamp(1.5rem,4vw,3.1rem)] leading-none uppercase -tracking-[.02em] transition-transform duration-300 ease-custom group-hover:translate-x-3" data-i18n="skills.s5">Testing & Quality</span>
+   764→                    <svg class="svc-plus w-[30px] h-[30px] transition-transform duration-400 ease-custom flex-none" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+   765→                <div class="svc-body grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-custom"><div class="overflow-hidden"><div class="svc-inner px-4 md:px-[calc(3.6rem+1.6rem+1rem)] pb-[2rem] max-w-[70ch]">
+   766→                            <p class="text-[1.05rem] opacity-90" data-i18n="skills.s5d">Writing robust test suites with Jest, React Testing Library, and Vitest to catch bugs early and ensure UI stability.</p>
+   767→                            <div class="inc flex flex-wrap gap-[.5rem] mt-4"><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Jest</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">RTL</span><span class="font-mono font-bold text-[9.5px] tracking-[.14em] border-[1.5px] border-ink rounded-full px-[.9em] py-[.45em] uppercase">Vitest</span></div>
+   768→                        </div></div></div>
+   769→            </div>
+   770→        </section>
+   771→
+   772→        <!-- ============ TESTIMONIALS ============ -->
+   773→        <section id="proof" class="proof-sec py-[7.5rem] px-[4vw] bg-paper2">
+   774→            <div class="shead mb-[3.5rem] max-w-[1100px]">
+   775→                <span class="kicker inline-block font-mono font-bold text-[11px] leading-none tracking-[.16em] border-[1.5px] border-current rounded-full px-[1em] py-[.6em] mb-[1.7rem] uppercase rv" data-i18n="proof.kicker">( 05 ) — PROOF</span>
+   776→                <h2 class="font-bricolage font-extrabold uppercase text-[clamp(2.7rem,7.5vw,7rem)] leading-[.95] -tracking-[.03em] rv" style="--d:.08s"><span data-i18n="proof.title1">PEOPLE </span><em class="font-serif italic font-normal text-[.95em] normal-case tracking-normal text-accent" data-i18n="proof.title2">talk.</em></h2>
+   777→                <p class="aside font-serif italic font-normal text-[clamp(1.05rem,1.6vw,1.3rem)] leading-[1.45] opacity-85 max-w-[52ch] mt-[1.2rem] rv" style="--d:.16s" data-i18n="proof.desc">Real quotes from real clients and colleagues. No further questions, your honour.</p>
+   778→            </div>
+   779→            <div class="clips columns-1 md:columns-2 lg:columns-3 gap-8">
+   780→                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q1">Anish said 'it depends' for forty-five minutes. Then fixed it in five.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q1who">— A REAL CLIENT <b class="text-accent">*</b></figcaption></figure>
+   781→                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv" style="--d:.06s"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q2">We asked for a dashboard. We received a dashboard, a lecture on performance, and our best quarter ever.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q2who">— HAPPY, SOMEWHAT</figcaption></figure>
+   782→                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv" style="--d:.12s"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q3">He refused to use jQuery. He was right.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q3who">— STILL SCARRED</figcaption></figure>
+   783→                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv" style="--d:.06s"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q4">Our app loads before we finish saying 'our app loads'.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q4who">— IMPATIENT INC.</figcaption></figure>
+   784→                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv" style="--d:.12s"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q5">10/10. Would argue about CSS specificity again.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q5who">— GRAYSCALE LLC</figcaption></figure>
+   785→                <figure class="clip relative bg-paper px-[1.8rem] pt-[2.4rem] pb-[1.7rem] break-inside-avoid mb-8 shadow-[5px_6px_0_rgba(74,59,50,.13)] transition-all duration-350 ease-custom hover:rotate-0 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(74,59,50,.18)] odd:-rotate-[1.6deg] even:rotate-[1.3deg] even:translate-y-2.5 lg:[&:nth-child(3n)]:-rotate-[.6deg] lg:[&:nth-child(3n)]:translate-y-[18px] rv" style="--d:.18s"><q class="font-serif italic font-normal text-[1.3rem] leading-[1.4]" data-i18n="proof.q6">He optimized our bundle. Page speed is up 40%. Coincidence? Probably. We don't care.</q><figcaption class="who block mt-[1.1rem] font-mono font-bold text-[10px] tracking-[.16em] uppercase" data-i18n="proof.q6who">— FONT ENTHUSIASTS MONTHLY</figcaption></figure>
+   786→            </div>
+   787→            <p class="clips-note font-mono font-bold text-[10px] tracking-[.16em] uppercase opacity-60 mt-4 rv" data-i18n="proof.note">* names withheld for legal reasons (mine)</p>
+   788→        </section>
+   789→
+   790→        <!-- ============ CONTACT ============ -->
+   791→        <section id="contact" class="contact-sec py-[7.5rem] px-[4vw] bg-accent text-paper">
+   792→            <span class="kicker inline-block font-mono font-bold text-[11px] leading-none tracking-[.16em] border-[1.5px] border-current rounded-full px-[1em] py-[.6em] mb-[1.7rem] uppercase rv" data-i18n="contact.kicker">( 06 ) — CONTACT</span>
+   793→            <h2 class="font-bricolage font-extrabold uppercase text-[clamp(4rem,14vw,13rem)] leading-[.95] -tracking-[.03em] rv" style="--d:.08s"><span data-i18n="contact.title1">SAY </span><em class="font-serif italic font-normal text-[.95em] normal-case tracking-normal text-paper" data-i18n="contact.title2">hi.</em></h2>
+   794→            <p class="contact-sub font-bricolage font-medium text-[clamp(1.1rem,1.8vw,1.45rem)] leading-[1.5] max-w-[52ch] mt-[1.4rem] text-paper rv" style="--d:.16s" data-i18n="contact.desc">Good briefs welcome. Dancing babies are not. I reply faster than this website loads — which, admittedly, is a low bar while the kerning slider is involved.</p>
+   795→            <button class="email-btn inline-flex items-center gap-[.7rem] mt-[2.6rem] font-mono font-bold text-[clamp(1.15rem,3vw,2.1rem)] -tracking-[.02em] border-b-[3px] border-paper pb-[.25em] text-paper transition-colors duration-250 hover:bg-paper hover:text-accent rv" id="emailBtn" style="--d:.24s">delinbanish@gmail.com
+   796→                <svg class="w-[.85em] h-[.85em]" viewBox="0 0 24 24" fill="none"><rect x="8" y="8" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4H5.5A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8" stroke="currentColor" stroke-width="2"/></svg>
+   797→            </button>
+   798→            <div class="socials flex flex-wrap gap-6 mt-12 rv" style="--d:.3s">
+   799→                <a href="https://linkedin.com/in/anish" target="_blank" rel="noopener" class="font-mono font-bold text-[11px] tracking-[.16em] inline-flex items-center gap-[.4rem] text-paper hover:line-through hover:decoration-paper hover:decoration-2">LINKEDIN <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+   800→                <a href="https://github.com" target="_blank" rel="noopener" class="font-mono font-bold text-[11px] tracking-[.16em] inline-flex items-center gap-[.4rem] text-paper hover:line-through hover:decoration-paper hover:decoration-2">GITHUB <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+   801→                <a href="https://twitter.com" target="_blank" rel="noopener" class="font-mono font-bold text-[11px] tracking-[.16em] inline-flex items-center gap-[.4rem] text-paper hover:line-through hover:decoration-paper hover:decoration-2">TWITTER <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+   802→                <a href="mailto:delinbanish@gmail.com" class="font-mono font-bold text-[11px] tracking-[.16em] inline-flex items-center gap-[.4rem] text-paper hover:line-through hover:decoration-paper hover:decoration-2">EMAIL <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+   803→            </div>
+   804→            <p class="contact-note font-mono font-bold text-[10px] tracking-[.18em] uppercase mt-[3.2rem] opacity-85 text-paper rv" style="--d:.36s" data-i18n="contact.note">CURRENTLY OPEN TO: FRONTEND ROLES · CURRENTLY AVOIDING: "QUICK FIXES"</p>
+   805→        </section>
+   806→
+   807→        <footer class="py-[2.2rem] px-[4vw] border-t-2 border-ink flex flex-wrap gap-y-5 gap-x-12 justify-center md:justify-between items-center font-mono font-bold text-[10px] tracking-[.14em] uppercase">
+   808→            <span class="text-center" data-i18n="footer.copyright">© 2024–2026 DELIN B ANISH. ALL RIGHTS RESERVED, INCLUDING THE RIGHT TO REMAIN KERNING.</span>
+   809→            <nav class="fnav flex gap-6 flex-wrap justify-center">
+   810→                <a href="#work" class="hover:line-through hover:decoration-accent" data-i18n="nav.work">WORK</a><a href="#receipt" class="hover:line-through hover:decoration-accent" data-i18n="nav.receipt">RECEIPT</a><a href="#timeline" class="hover:line-through hover:decoration-accent" data-i18n="nav.timeline">TIMELINE</a><a href="#contact" class="hover:line-through hover:decoration-accent" data-i18n="nav.contact">CONTACT</a>
+   811→            </nav>
+   812→            <button id="dontPress" class="font-mono font-bold text-[10px] tracking-[.16em] text-accent border-2 border-accent px-[1.1em] py-[.6em] rounded-full transition-colors duration-250 hover:bg-accent hover:text-paper active:scale-95" data-i18n="footer.dontPress">DO NOT PRESS</button>
+   813→        </footer>
+   814→    </main>
+   815→
+   816→    <!-- ============ PROJECT MODAL ============ -->
+   817→    <div class="modal" id="modal" aria-hidden="true">
+   818→        <div class="modal-backdrop" data-close></div>
+   819→        <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+   820→            <button class="modal-close font-mono font-bold text-[11px] tracking-[.14em] hover:bg-dark hover:text-paper transition-colors duration-250" id="mClose" data-close data-i18n="modal.close">CLOSE — RUN AWAY</button>
+   821→            <div class="modal-inner grid gap-10 lg:gap-[2.6rem] px-5 md:px-12 pb-8 md:pb-12 max-w-[1300px] mx-auto lg:grid-cols-[1.05fr_1fr] lg:items-start">
+   822→                <div class="modal-media"><img id="mImg" class="w-full aspect-[4/3] object-cover border-2 border-ink" alt=""></div>
+   823→                <div class="modal-body">
+   824→                    <span class="m-meta font-mono font-bold text-[10.5px] tracking-[.16em] text-accent uppercase" id="mMeta"></span>
+   825→                    <h3 class="font-bricolage font-extrabold text-[clamp(1.9rem,4vw,3.4rem)] leading-none uppercase -tracking-[.02em] mt-[.7rem] mb-[1.8rem]" id="mTitle"></h3>
+   826→                    <div class="m-grid grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+   827→                        <div><h4 class="font-mono font-bold text-[10px] tracking-[.18em] text-accent uppercase mb-[.45rem]" data-i18n="modal.brief">THE BRIEF</h4><p class="text-[.98rem] leading-[1.55]" id="mBrief"></p></div>
+   828→                        <div><h4 class="font-mono font-bold text-[10px] tracking-[.18em] text-accent uppercase mb-[.45rem]" data-i18n="modal.outcome">THE OUTCOME</h4><p class="text-[.98rem] leading-[1.55]" id="mOutcome"></p></div>
+   829→                        <div><h4 class="font-mono font-bold text-[10px] tracking-[.18em] text-accent uppercase mb-[.45rem]" data-i18n="modal.quote">CLIENT QUOTE</h4><p class="quote font-serif italic font-normal text-[1.1rem]" id="mQuote"></p></div>
+   830→                        <div><h4 class="font-mono font-bold text-[10px] tracking-[.18em] text-accent uppercase mb-[.45rem]" data-i18n="modal.lesson">LESSON LEARNED</h4><p class="text-[.98rem] leading-[1.55]" id="mLesson"></p></div>
+   831→                    </div>
+   832→                    <a id="mAsk" href="#" class="inline-flex items-center gap-[.5rem] mt-8 font-mono font-bold text-[12px] tracking-[.14em] border-2 border-ink px-[1.4em] py-[.9em] rounded-full transition-colors duration-250 hover:bg-accent hover:border-accent hover:text-paper" data-i18n="modal.ask">ASK ME ABOUT IT — SERIOUSLY <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+   833→                </div>
+   834→            </div>
+   835→        </div>
+   836→    </div>
+   837→
+   838→    <div id="toast" role="status" aria-live="polite" class="font-mono font-bold text-[11.5px] tracking-[.1em] uppercase"></div>
+   839→
+   840→    <script>
+   841→        (function() {
+   842→            'use strict';
+   843→            const $ = s => document.querySelector(s),
+   844→                $$ = s => [...document.querySelectorAll(s)];
+   845→            const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+   846→            const img = (seed, w, h) => 'https://picsum.photos/seed/' + seed + '/' + w + '/' + h + '.jpg';
+   847→
+   848→            /* ============ TRANSLATION SYSTEM ============ */
+   849→            const translations = {
+   850→                en: {
+   851→                    // loader
+   852→                    'loader.line1': 'warming up the components',
+   853→                    'loader.skip': 'CLICK TO SKIP THE DRAMA',
+   854→                    // nav
+   855→                    'nav.work': 'Work',
+   856→                    'nav.receipt': 'Receipt',
+   857→                    'nav.timeline': 'Timeline',
+   858→                    'nav.proof': 'Proof',
+   859→                    'nav.contact': 'Contact',
+   860→                    'nav.hire': 'Hire me',
+   861→                    // menu tags
+   862→                    'menu.workTag': 'the projects',
+   863→                    'menu.receiptTag': 'the damage report',
+   864→                    'menu.timelineTag': 'career path',
+   865→                    'menu.proofTag': 'people talk',
+   866→                    'menu.contactTag': 'say hi',
+   867→                    'menu.foot': 'EST. 2024 · STILL KERNING',
+   868→                    // hero
+   869→                    'hero.meta1': 'PORTFOLIO — FRONTEND UI DEVELOPER',
+   870→                    'hero.meta2': 'EST. 2024',
+   871→                    'hero.intro1': 'Frontend <em class="font-serif italic font-normal text-[1.1em]">UI Developer</em> with 2 years of experience building React.js web applications. I specialize in core front-end technologies and modern React development.',
+   872→                    'hero.intro2': '( Anish is my real name. So is the kerning obsession. Drag the slider — I insist. )',
+   873→                    'hero.kernLabel': 'KERNING: <b class="text-accent">AS GOD INTENDED</b>',
+   874→                    'hero.kernEnd1': 'SQUISHED',
+   875→                    'hero.kernEnd2': 'SOCIAL DISTANCING',
+   876→                    'hero.scroll': 'SCROLL — IT GETS BETTER',
+   877→                    'hero.stats': '2 YRS · 3+ PROJECTS · 0 REGRETS* (*ZERO)',
+   878→                    'hero.badge': 'OPEN TO FRONTEND ROLES · REACT SPECIALIST ·',
+   879→                    // marquee
+   880→                    'marquee.exp': '2 years experience',
+   881→                    'marquee.react': 'React 19',
+   882→                    'marquee.ts': 'TypeScript',
+   883→                    'marquee.tailwind': 'Tailwind CSS',
+   884→                    'marquee.redux': 'Redux Toolkit',
+   885→                    'marquee.gsap': 'GSAP',
+   886→                    'marquee.agile': 'Agile',
+   887→                    'marquee.perf': 'Performance obsessed',
+   888→                    // work
+   889→                    'work.kicker': '( 01 ) — SELECTED PROJECTS',
+   890→                    'work.title1': 'THE ',
+   891→                    'work.title2': 'projects',
+   892→                    'work.desc': 'Three projects that showcase my frontend engineering skills, from e-commerce platforms to admin dashboards and educational portals.',
+   893→                    'work.proj1.title': 'E-Commerce Platform',
+   894→                    'work.proj1.meta': 'FRONTEND / E-COMMERCE',
+   895→                    'work.proj2.title': 'Admin Panel & Dashboard',
+   896→                    'work.proj2.meta': 'DASHBOARD / UI',
+   897→                    'work.proj3.title': 'Educational Portal',
+   898→                    'work.proj3.meta': 'PORTAL / PAYMENTS',
+   899→                    // receipt
+   900→                    'receipt.kicker': '( 02 ) — THE DAMAGE REPORT',
+   901→                    'receipt.title1': 'TWO YEARS, ',
+   902→                    'receipt.title2': 'itemized.',
+   903→                    'receipt.desc': 'Every pull request tells a story. Mine screams. All figures verified by my team lead, who laughed, then asked for more features.',
+   904→                    'receipt.fine': '* NO REFUNDS · ALL SALES FINAL · COME AGAIN',
+   905→                    'receipt.head': 'CAREER RECEIPT',
+   906→                    'receipt.item1': 'Projects delivered',
+   907→                    'receipt.item2': 'React components built',
+   908→                    'receipt.item2val': 'hundreds',
+   909→                    'receipt.item3': 'Bugs fixed',
+   910→                    'receipt.item3val': 'many',
+   911→                    'receipt.item4': 'Console errors shipped',
+   912→                    'receipt.item5': 'npm packages installed',
+   913→                    'receipt.item5val': 'thousands',
+   914→                    'receipt.item6': 'Redux slices created',
+   915→                    'receipt.item7': 'Coffee (litres)',
+   916→                    'receipt.item8': 'Meetings survived',
+   917→                    'receipt.item8val': 'countless',
+   918→                    'receipt.subtotal': 'SUBTOTAL',
+   919→                    'receipt.subtotalVal': 'EXPERIENCE',
+   920→                    'receipt.vat': 'VAT (TRAUMA, IE11)',
+   921→                    'receipt.vatVal': 'INCLUDED',
+   922→                    'receipt.total': 'TOTAL',
+   923→                    'receipt.totalVal': '2 YEARS',
+   924→                    'receipt.stamp': '2 yrs service',
+
+[showing lines 695-924 of 1776; use offset=925 with limit to continue reading]
